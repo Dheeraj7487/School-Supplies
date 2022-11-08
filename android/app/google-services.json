@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "280636322532",
+    "project_id": "schoolsupplies-5cf3f",
+    "storage_bucket": "schoolsupplies-5cf3f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280636322532:android:412ecb0e88eb78a3b032f1",
+        "android_client_info": {
+          "package_name": "com.elsner.school_supplies_hub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "280636322532-hvkjk1pu5aur3nj00mtvlujloor78sje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcMVxe8X6CmuW6J5Xxc0Ttrwm01vfe4HM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "280636322532-hvkjk1pu5aur3nj00mtvlujloor78sje.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

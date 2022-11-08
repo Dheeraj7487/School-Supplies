@@ -1,0 +1,98 @@
+import '../add_details/add_book_details_screen.dart';
+import '../book_category/screen/book_category_class_screen.dart';
+import '../home/screen/home_screen.dart';
+import '../my_library/screen/my_library_screen.dart';
+import '../profile/profile_screen.dart';
+import '../utils/app_color.dart';
+import 'package:flutter/material.dart';
+
+class BottomNavBarScreen extends StatefulWidget {
+  const BottomNavBarScreen({Key? key}) : super(key: key);
+
+  @override
+  State<BottomNavBarScreen> createState() => _BottomNavBarScreenState();
+}
+
+class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
+
+  int _selectedIndex=0;
+  List<Widget> buildScreen(){
+    return [
+      const HomeScreen(),
+      const BookCategoryScreen(),
+      const MyLibraryScreen(),
+      const ProfileScreen()
+    ];
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColor.appColor,
+      floatingActionButton:FloatingActionButton(
+        splashColor: AppColor.appColor,
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddBookDetail()));
+        },
+        child: const Icon(Icons.add,color: AppColor.appColor), //icon inside button
+      ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      body: WillPopScope(
+          onWillPop: () async{
+            if(_selectedIndex != 0) {
+              setState(() {
+                _selectedIndex = 0;
+              });
+              return false;
+            } else {
+              return true;
+            }
+          },
+          child: buildScreen().elementAt(_selectedIndex)),
+
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+            canvasColor: AppColor.appColor,
+        ),
+        child: BottomAppBar(
+          shape: const CircularNotchedRectangle(), //shape of notch
+          notchMargin: 3,
+          clipBehavior: Clip.antiAlias,
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _selectedIndex,
+            selectedItemColor: AppColor.darkWhiteColor,
+            unselectedItemColor: AppColor.whiteColor,
+            onTap: _onItemTapped,
+            items:  const [
+              BottomNavigationBarItem(
+                  label: "Home",
+                  icon:  Icon(Icons.home)
+              ),
+              BottomNavigationBarItem(
+                  label: "Class",
+                  icon: Icon(Icons.class_)
+              ),
+              BottomNavigationBarItem(
+                  label: "Library",
+                  icon: Icon(Icons.library_books)
+              ),
+              BottomNavigationBarItem(
+                  label: "Profile",
+                  icon: Icon(Icons.person)
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
