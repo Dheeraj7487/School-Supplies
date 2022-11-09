@@ -66,12 +66,12 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
                       AppUtils.instance.showSnackBar(context,'Your review will be post');
                       for (var snapshot1 in queryUserRatingSnapshots.docChanges) {
                         for(int i = 0;i<1;i++){
-                          userRating = snapshot1.doc.get('bookRating');
+                         // userRating = snapshot1.doc.get('bookRating');
                           ratingList.add(snapshot1.doc.get('bookRating'));
                           sum = ratingList.reduce((a, b) => a + b);
                           userLength = queryUserRatingSnapshots.docs.length;
                           rating = sum/userLength;
-                          debugPrint('User Rating => $sum = $userLength = $rating = $userRating');
+                          debugPrint('User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
                           break;
                         }
                       }
@@ -91,10 +91,8 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
                         userEmail= bookSnapshot.doc.get('userEmail');
                         timestamp= bookSnapshot.doc.get('timeStamp');
                         userMobile = bookSnapshot.doc.get('userMobile');
-                        //print(bookImages);
                       }
 
-                     // print(bookImages);
                       AddBookDetailsAuth().addBookDetails(
                           uId: userId, publisherName: publisherName,
                           userEmail: userEmail, userMobile: userMobile,
@@ -131,6 +129,7 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
                           return RatingBar.builder(
                             initialRating: 0,
                             minRating: 1,
+                            glowColor: Colors.transparent,
                             direction: Axis.horizontal,
                             allowHalfRating: false,
                             itemCount: 5,
@@ -149,7 +148,6 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
                                 userRating = rating;
                                 debugPrint('I am user Rating => $userRating');
                               });
-
                             },
                           );
                         }
@@ -175,7 +173,6 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
                                 debugPrint('I am user Rating another => $userRating');
                                 debugPrint('I am Firebase Rating  => ${snapshot.data?.docs[0]['bookRating']}');
                               });
-
                             },
                           );
                         }

@@ -1,26 +1,26 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/add_details/provider/add_book_detail_provider.dart';
-// import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:school_supplies_hub/utils/app_color.dart';
 import 'package:school_supplies_hub/widgets/loading_widget.dart';
 import 'login/provider/loading_provider.dart';
 import 'login/screen/splash_screen.dart';
 
-// const stripePublishableKey =  "pk_test_51LiBiMSA1JiaZapdYWXElEllmQ0MjwJNhmXjAyIsHVp5ev6Zv4DFOmg0lVBRzQ2whpZHhDOQQrtftbuNAATE7ggA00xTK2iHGW";
+ const stripePublishableKey =  "pk_test_51LiBiMSA1JiaZapdYWXElEllmQ0MjwJNhmXjAyIsHVp5ev6Zv4DFOmg0lVBRzQ2whpZHhDOQQrtftbuNAATE7ggA00xTK2iHGW";
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Stripe.publishableKey = stripePublishableKey;
-  runApp(
+   Stripe.publishableKey = stripePublishableKey;
+   runApp(
       MultiProvider(
           providers: [
             ChangeNotifierProvider<LoadingProvider>(create: (_) => LoadingProvider()),
             ChangeNotifierProvider<AddBookDetailProvider>(create: (_) => AddBookDetailProvider()),
-          ], child: const MyApp()
-      ));
+          ], child: const MyApp())
+   );
 }
 
 class MyApp extends StatelessWidget {

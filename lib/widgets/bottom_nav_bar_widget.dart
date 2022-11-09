@@ -1,5 +1,6 @@
 import '../add_details/add_book_details_screen.dart';
 import '../book_category/screen/book_category_class_screen.dart';
+import '../book_notification_detail/screen/book_notification_details_screen.dart';
 import '../home/screen/home_screen.dart';
 import '../my_library/screen/my_library_screen.dart';
 import '../profile/profile_screen.dart';
@@ -21,6 +22,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
       const HomeScreen(),
       const BookCategoryScreen(),
       const MyLibraryScreen(),
+      const BookNotificationDetailScreen(),
       const ProfileScreen()
     ];
   }
@@ -35,15 +37,15 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.appColor,
-      floatingActionButton:FloatingActionButton(
-        splashColor: AppColor.appColor,
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddBookDetail()));
-        },
-        child: const Icon(Icons.add,color: AppColor.appColor), //icon inside button
-      ),
+      // floatingActionButton:FloatingActionButton(
+      //   splashColor: AppColor.appColor,
+      //   onPressed: (){
+      //     Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddBookDetail()));
+      //   },
+      //   child: const Icon(Icons.add,color: AppColor.appColor), //icon inside button
+      // ),
 
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: WillPopScope(
           onWillPop: () async{
             if(_selectedIndex != 0) {
@@ -83,6 +85,10 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
               BottomNavigationBarItem(
                   label: "Library",
                   icon: Icon(Icons.library_books)
+              ),
+              BottomNavigationBarItem(
+                  label: "Notification",
+                  icon: Icon(Icons.notification_add)
               ),
               BottomNavigationBarItem(
                   label: "Profile",

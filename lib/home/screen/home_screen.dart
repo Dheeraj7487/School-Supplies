@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:school_supplies_hub/utils/app_color.dart';
 import '../../Firebase/firebase_collection.dart';
+import '../../add_details/add_book_details_screen.dart';
 import '../../profile/edit_profile_screen.dart';
 import '../widget/recent_book_widget.dart';
 import '../widget/latest_book_widget.dart';
@@ -179,6 +180,13 @@ class _HomeScreenState extends State<HomeScreen>{
               ],
             ),
           ),
+        ),
+        floatingActionButton:FloatingActionButton(
+          splashColor: AppColor.appColor,
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddBookDetail()));
+          },
+          child: const Icon(Icons.add,color: AppColor.appColor), //icon inside button
         ),
       ),
     );

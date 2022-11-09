@@ -49,6 +49,7 @@ dependencies:
 #  stripe_native: ^1.2.3
   flutter_stripe: ^6.0.0
   flutter_spinkit: ^5.1.0
+  http: ^0.13.5
 
   flutter:
     sdk: flutter

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/login/provider/loading_provider.dart';
 
 import '../../utils/app_utils.dart';
@@ -18,7 +19,7 @@ class LoginAuth {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
     try {
-      //Provider.of<LoadingProvider>(context,listen: false).startLoading();
+      Provider.of<LoadingProvider>(context,listen: false).startLoading();
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -31,11 +32,10 @@ class LoginAuth {
       if (e.code == 'weak-password') {
         debugPrint('The password provided is too weak');
         AppUtils.instance.showSnackBar(context, 'The password provided is too weak');
-        //Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+        Provider.of<LoadingProvider>(context,listen: false).stopLoading();
       }
       else if (e.code == 'email-already-in-use') {
-        //AppUtils.instance.showToast(toastMessage: 'The account already exists for that email');
-        //Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+        Provider.of<LoadingProvider>(context,listen: false).stopLoading();
         AppUtils.instance.showSnackBar(context, 'The account already exists for that email');
       }
     } catch (e) {
@@ -52,6 +52,7 @@ class LoginAuth {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
     try {
+      Provider.of<LoadingProvider>(context,listen: false).startLoading();
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -60,10 +61,12 @@ class LoginAuth {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         debugPrint('No user found for that email');
+        Provider.of<LoadingProvider>(context,listen: false).stopLoading();
         AppUtils.instance.showSnackBar(context, 'No user found for that email');
       }
       else if (e.code == 'wrong-password') {
         debugPrint('Wrong password provided');
+        Provider.of<LoadingProvider>(context,listen: false).stopLoading();
         AppUtils.instance.showSnackBar(context, 'Wrong password provided');
       }
     }

@@ -74,6 +74,28 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                           )
                                       ),
                                       child: Text(snapshot.data?.docs[index]['bookName'], style: const TextStyle(color: AppColor.whiteColor),))
+                              ),
+
+                              Positioned(
+                                  bottom : 10,right: 20,
+                                  child: Row(
+                                    children: List.generate(
+                                      3, (index1) {
+                                            return Container(
+                                              margin: const EdgeInsets.all(4),
+                                              width: 6,
+                                              height: 6,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(10),
+                                                color: index == index1
+                                                    ? AppColor.redColor
+                                                    : AppColor.appColor,
+                                                shape: BoxShape.rectangle,
+                                              ),
+                                            );
+                                          }
+                                    ),
+                                  )
                               )
                             ],
                           ),

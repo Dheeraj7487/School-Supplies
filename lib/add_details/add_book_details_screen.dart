@@ -71,7 +71,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
 
   Future<List> uploadFile(context) async {
     //Store Image in firebase database
-
     Provider.of<LoadingProvider>(context,listen: false).startLoading();
     List imagesUrls=[];
 
@@ -285,7 +284,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                 },
                                 items:  snapshot.selectCourses
                             ),
-
                             const SizedBox(height: 20),
                             appDropDown(
                                 value: snapshot.selectClass,

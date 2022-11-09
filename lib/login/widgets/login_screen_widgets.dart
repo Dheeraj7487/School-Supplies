@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_supplies_hub/login/auth/login_provider.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_supplies_hub/login/provider/loading_provider.dart';
 import 'package:school_supplies_hub/widgets/button_widget.dart';
 import 'package:school_supplies_hub/widgets/textfield_widget.dart';
@@ -117,7 +115,6 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
               FocusScope.of(context).unfocus();
               if(_formKey.currentState!.validate()){
                // ref.read(loadingProvider).startLoading();
-                Provider.of<LoadingProvider>(context,listen: false).startLoading();
                 User? user = await LoginAuth.signInUsingEmailPassword(
                   email: emailController.text.trim(),
                   password: passwordController.text.trim(),
@@ -138,8 +135,9 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               Padding(
-                padding: EdgeInsets.only(bottom: 10,top: 10),
+                padding: const EdgeInsets.only(bottom: 10,top: 10),
                 child: Text(
                   'Need an account?  ',
                     style: Theme.of(context).textTheme.headline6
@@ -152,7 +150,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const RegisterScreen()));
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: 10,top: 10),
+                  padding: const EdgeInsets.only(bottom: 10,top: 10),
                   child: Text(
                     'SIGN UP',
                       style: Theme.of(context).textTheme.headlineLarge

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../Firebase/firebase_collection.dart';
@@ -29,30 +30,33 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       appBar: AppBar(
         title: Text(widget.snapshotData['bookName']),
         actions: [
-          PopupMenuButton<int>(
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 1,
-                child: Row(
-                  children: [
-                    const Icon(Icons.rate_review_outlined,color: AppColor.whiteColor,size: 20),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text("Review",style: Theme.of(context).textTheme.subtitle1)
-                  ],
+          Visibility(
+            visible: widget.snapshotData['currentUser'] != FirebaseAuth.instance.currentUser?.email,
+            child: PopupMenuButton<int>(
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.rate_review_outlined,color: AppColor.whiteColor,size: 20),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text("Review",style: Theme.of(context).textTheme.subtitle1)
+                    ],
+                  ),
                 ),
-              ),
-            ],
-            offset: const Offset(0, 37),
-           // icon: Image.asset(AppImage.menu,height: 20,width: 17,color: AppColor.whiteColor,),
-            color: AppColor.appColor,
-            elevation: 2,
-            onSelected: (value) {
-              if (value == 1) {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>GiveReviewScreen(snapshotData: widget.snapshotData,)));
-              }
-            },
+              ],
+              offset: const Offset(0, 37),
+             // icon: Image.asset(AppImage.menu,height: 20,width: 17,color: AppColor.whiteColor,),
+              color: AppColor.appColor,
+              elevation: 2,
+              onSelected: (value) {
+                if (value == 1) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>GiveReviewScreen(snapshotData: widget.snapshotData,)));
+                }
+              },
+            ),
           ),
         ],
       ),
