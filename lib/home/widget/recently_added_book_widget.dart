@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../Firebase/firebase_collection.dart';
 import '../../utils/app_color.dart';
@@ -14,9 +16,29 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
       stream: FirebaseCollection().addBookCollection.
       orderBy('timeStamp',descending: true).snapshots(),
       builder: (context,AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
-        if(snapshot.hasError){
-          return const CircularProgressIndicator();
-        } else if(snapshot.hasData){
+         if(snapshot.hasError){
+           return const SizedBox();
+        } else if(snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none){
+           return Container(
+             padding: const EdgeInsets.only(left: 20,right: 20),
+             child: Shimmer.fromColors(
+               highlightColor: Colors.grey,
+               baseColor: Colors.white,
+               child: Container(
+                 padding: const EdgeInsets.only(left: 20,right: 20),
+                   height: MediaQuery.of(context).size.height/3,
+                   width: MediaQuery.of(context).size.width,
+                 decoration: BoxDecoration(
+                     color: Colors.white,
+                     borderRadius: BorderRadius.circular(10)
+                 ),
+                 child: const SizedBox(),
+               ),
+             ),
+           );
+         } else if(!snapshot.hasData){
+           return const SizedBox();
+         } else if(snapshot.hasData){
           return Visibility(
             visible: snapshot.data!.docChanges.length >=3 ? true : false,
             child: Column(
@@ -58,10 +80,28 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                     topRight: Radius.circular(10),
                                     topLeft: Radius.circular(10),
                                   ),
-                                  child: Image.network(
+                                  child: CachedNetworkImage(
+                                    imageUrl: "${snapshot.data?.docs[index]['bookImages'][0]}",
+                                    height: MediaQuery.of(context).size.height/3,
+                                    width: MediaQuery.of(context).size.width,fit: BoxFit.fill,
+                                    placeholder: (context, url) => Shimmer.fromColors(
+                                      highlightColor: AppColor.appColor,
+                                      baseColor: Colors.grey.shade100,
+                                      period: const Duration(seconds: 2),
+                                      child: SizedBox(
+                                        height: MediaQuery.of(context).size.height/3,
+                                        width: MediaQuery.of(context).size.width,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                                  ),
+
+
+                                  /*Image.network(
                                       snapshot.data?.docs[index]['bookImages'][0],
                                       height: MediaQuery.of(context).size.height/3,
-                                      width: MediaQuery.of(context).size.width,fit: BoxFit.fill)),
+                                      width: MediaQuery.of(context).size.width,fit: BoxFit.fill)*/
+                              ),
                               Positioned(
                                   bottom : 30,
                                   child: Container(
@@ -73,7 +113,7 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                             bottomRight: Radius.circular(10),
                                           )
                                       ),
-                                      child: Text(snapshot.data?.docs[index]['bookName'], style: const TextStyle(color: AppColor.whiteColor),))
+                                      child: Text(snapshot.data?.docs[index]['bookName'],overflow: TextOverflow.ellipsis,))
                               ),
 
                               Positioned(
@@ -89,8 +129,7 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                                 borderRadius: BorderRadius.circular(10),
                                                 color: index == index1
                                                     ? AppColor.redColor
-                                                    : AppColor.appColor,
-                                                shape: BoxShape.rectangle,
+                                                    : Colors.white,
                                               ),
                                             );
                                           }
@@ -107,7 +146,7 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
             ),
           );
         } else {
-          return const CircularProgressIndicator();
+          return const SizedBox();
         }
       }
     );

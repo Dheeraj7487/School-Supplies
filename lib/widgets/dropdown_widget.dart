@@ -15,7 +15,7 @@ Widget appDropDown({required String? value,
     buttonPadding: const EdgeInsets.only(left: 14, right: 14),
     buttonDecoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: Colors.black12.withOpacity(0.1),
+      color: const Color(0xD336383E),
     ),
     itemHeight: 40,
     dropdownMaxHeight: 200,

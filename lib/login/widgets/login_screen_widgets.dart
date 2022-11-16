@@ -1,14 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/login/provider/loading_provider.dart';
 import 'package:school_supplies_hub/widgets/button_widget.dart';
 import 'package:school_supplies_hub/widgets/textfield_widget.dart';
+import '../../Firebase/firebase_collection.dart';
 import '../../utils/app_color.dart';
 import '../../utils/app_preference_key.dart';
 import '../../utils/app_utils.dart';
 import '../../widgets/bottom_nav_bar_widget.dart';
 import '../auth/login_auth.dart';
+import '../auth/login_provider.dart';
 import '../screen/register_screen.dart';
 import '../screen/reset_password_screen.dart';
 
@@ -24,6 +27,19 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
   TextEditingController emailController = TextEditingController(),passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool passwordVisibility = false;
+  String? fcmToken;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    FirebaseMessaging.instance.getToken().then((value) {
+      debugPrint('Token: $value');
+      setState(() {
+        fcmToken = value;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +48,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Login",
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
+          Text("Login", style: Theme.of(context).textTheme.bodyText1),
           const SizedBox(height: 10),
           Text('Please sign in to continue',style: Theme.of(context).textTheme.headline5,),
           const SizedBox(height: 50),
@@ -124,8 +137,25 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                 if(user != null){
                   AppUtils.instance.setPref(PreferenceKey.boolKey, PreferenceKey.prefLogin, true);
                   AppUtils.instance.setPref(PreferenceKey.stringKey, PreferenceKey.prefEmail, emailController.text);
-                  Provider.of<LoadingProvider>(context,listen: false).stopLoading();
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const BottomNavBarScreen()));
+
+                  var snapshotData = await FirebaseCollection().userCollection.
+                  where('userEmail',isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
+                  for(var data in snapshotData.docChanges){
+                    LoginProvider().addUserDetail(
+                        uId: "${FirebaseAuth.instance.currentUser?.uid}",
+                        userName: data.doc.get('userName'),
+                        userEmail: data.doc.get('userEmail'),
+                        userMobile: data.doc.get('userMobile'),
+                        chooseClass: data.doc.get('chooseClass'),
+                        fcmToken: fcmToken.toString(),
+                        rating: data.doc.get('userRating'),
+                        currentUser: "${FirebaseAuth.instance.currentUser?.email}",
+                        timestamp: DateTime.now().toString()).then((value) {
+                      Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const BottomNavBarScreen()));
+                    });
+
+                  }
                 }
               }
             },
@@ -135,7 +165,6 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               Padding(
                 padding: const EdgeInsets.only(bottom: 10,top: 10),
                 child: Text(

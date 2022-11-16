@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:school_supplies_hub/utils/app_color.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ReadingShimmers extends StatelessWidget {
-  const ReadingShimmers({Key? key}) : super(key: key);
+class HorizontalShimmers extends StatelessWidget {
+  double height;
+  HorizontalShimmers({Key? key,required this.height}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +13,9 @@ class ReadingShimmers extends StatelessWidget {
       baseColor: Colors.grey.shade100,
       period: const Duration(seconds: 2),
       child: SizedBox(
-        height: 170,
+        height: height,
         child: ListView.builder(
-            itemCount: 4,
+            itemCount: 10,
             shrinkWrap: true,
             primary: true,
             scrollDirection: Axis.horizontal,

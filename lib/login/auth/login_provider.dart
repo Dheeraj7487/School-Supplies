@@ -14,8 +14,10 @@ class LoginProvider{
         required String userName,
         required String userEmail,
         required String userMobile,
-        required double rating,
+        required int rating,
+        required String fcmToken,
         required String currentUser,
+        required String chooseClass,
         required String timestamp
       }) async {
 
@@ -24,7 +26,9 @@ class LoginProvider{
       userName: userName,
       userEmail: userEmail,
       userMobile: userMobile,
+      fcmToken: fcmToken,
       userRating: 0,
+      chooseClass: chooseClass,
       timeStamp: timestamp,
       currentUser: currentUser
     );

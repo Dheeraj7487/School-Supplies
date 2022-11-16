@@ -3,6 +3,7 @@ import '../book_category/screen/book_category_class_screen.dart';
 import '../book_notification_detail/screen/book_notification_details_screen.dart';
 import '../home/screen/home_screen.dart';
 import '../my_library/screen/my_library_screen.dart';
+import '../notification/push_notification.dart';
 import '../profile/profile_screen.dart';
 import '../utils/app_color.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,12 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
     });
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    PushNotification().getNotification(context);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

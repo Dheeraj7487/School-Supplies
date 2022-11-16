@@ -12,6 +12,9 @@ class PopularBooksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.appColor,
+      appBar: AppBar(
+        title: Text('All Book'),
+      ),
       body: StreamBuilder(
         stream: FirebaseCollection().addBookCollection.snapshots(),
         builder: (context,AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
@@ -27,7 +30,7 @@ class PopularBooksScreen extends StatelessWidget {
                   return GestureDetector(
                     onTap: (){},
                     child: Container(
-                      margin: const EdgeInsets.only(left: 10,right: 10,top: 15),
+                      margin: const EdgeInsets.only(left: 10,right: 10,top: 0),
                       decoration: BoxDecoration(
                           border: Border.all(width: 0.1),
                           borderRadius: BorderRadius.circular(10)

@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/add_details/provider/add_book_detail_provider.dart';
@@ -8,12 +10,36 @@ import 'package:school_supplies_hub/widgets/loading_widget.dart';
 import 'login/provider/loading_provider.dart';
 import 'login/screen/splash_screen.dart';
 
- const stripePublishableKey =  "pk_test_51LiBiMSA1JiaZapdYWXElEllmQ0MjwJNhmXjAyIsHVp5ev6Zv4DFOmg0lVBRzQ2whpZHhDOQQrtftbuNAATE7ggA00xTK2iHGW";
+const stripePublishableKey =  "pk_test_51LiBiMSA1JiaZapdYWXElEllmQ0MjwJNhmXjAyIsHVp5ev6Zv4DFOmg0lVBRzQ2whpZHhDOQQrtftbuNAATE7ggA00xTK2iHGW";
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Handling a background message ${message.messageId}');
+}
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel',
+  'High Importance Notifications',
+  importance: Importance.high,
+);
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
    Stripe.publishableKey = stripePublishableKey;
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true, badge: true, sound: true,
+  );
+
    runApp(
       MultiProvider(
           providers: [

@@ -53,8 +53,7 @@ class TextFieldWidget {
             borderRadius: BorderRadius.circular(10)),
         focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: AppColor.appColor.withOpacity(0.3)),borderRadius: BorderRadius.circular(10)),
-        enabledBorder:
-        OutlineInputBorder(borderSide: BorderSide.none,borderRadius: BorderRadius.circular(10)),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide.none,borderRadius: BorderRadius.circular(10)),
         errorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: AppColor.redColor.withOpacity(0.1)),borderRadius: BorderRadius.circular(10)),
         focusedErrorBorder: OutlineInputBorder(

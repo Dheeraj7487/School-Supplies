@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:school_supplies_hub/Firebase/firebase_collection.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../book_details/screen/book_details_screen.dart';
 import '../../utils/app_color.dart';
 
@@ -14,7 +16,7 @@ class RecentBookWidget extends StatelessWidget {
       stream: FirebaseCollection().addBookCollection.snapshots(),
       builder: (context,AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
         if(snapshot.hasError){
-          return const Center(child: CircularProgressIndicator(),);
+          return const Center(child: SizedBox(),);
         } else if(snapshot.hasData){
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,8 +70,20 @@ class RecentBookWidget extends StatelessWidget {
                           children: [
                             ClipRRect(
                               borderRadius: const BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10)),
-                              child: Image.network(snapshot.data?.docs[index]['bookImages'][0],
-                                  height: 120,width: double.infinity,fit: BoxFit.fill),
+                              child: CachedNetworkImage(
+                                imageUrl: "${snapshot.data?.docs[index]['bookImages'][1]}",
+                                height: 120,width: double.infinity,fit: BoxFit.fill,
+                                placeholder: (context, url) => Shimmer.fromColors(
+                                  highlightColor: AppColor.appColor,
+                                  baseColor: Colors.grey.shade100,
+                                  period: const Duration(seconds: 2),
+                                  child: SizedBox(
+                                    height: MediaQuery.of(context).size.height/3,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => const Icon(Icons.error),
+                              ),
                             ),
                             const SizedBox(height: 10),
                             Container(
@@ -194,7 +208,7 @@ class RecentBookWidget extends StatelessWidget {
             ],
           );
         } else {
-          return const Center(child: CircularProgressIndicator(),);
+          return const Center(child: SizedBox(),);
         }
       }
     );

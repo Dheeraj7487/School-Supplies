@@ -7,10 +7,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/add_details/provider/add_book_detail_provider.dart';
 import 'package:school_supplies_hub/login/provider/loading_provider.dart';
+import 'package:school_supplies_hub/notification/push_notification.dart';
 import 'package:school_supplies_hub/utils/app_image.dart';
 import 'package:school_supplies_hub/utils/app_utils.dart';
 import 'package:school_supplies_hub/widgets/button_widget.dart';
 import 'package:school_supplies_hub/widgets/dropdown_widget.dart';
+import '../Firebase/firebase_collection.dart';
 import '../utils/app_color.dart';
 import '../widgets/bottom_nav_bar_widget.dart';
 import '../widgets/textfield_widget.dart';
@@ -32,7 +34,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
   TextEditingController priceController = TextEditingController();
   TextEditingController bookDescriptionController = TextEditingController();
   TextEditingController authorController = TextEditingController();
-  String? selectedCourses;
   String selectBookVideoName = '';
   File? file;
   String bookVideoName ='';
@@ -48,7 +49,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
     } else if(imageFileList!.length > 2){
       imageFileList!.addAll(selectedImages);
     } else {
-      AppUtils.instance.showSnackBar(context, 'Minimum 3 file select');
+      await AppUtils.instance.showSnackBar(context, 'Minimum 3 file select');
     }
     debugPrint("Image List Length:${imageFileList!.length}");
     setState((){});
@@ -73,6 +74,10 @@ class _AddBookDetailState extends State<AddBookDetail> {
     //Store Image in firebase database
     Provider.of<LoadingProvider>(context,listen: false).startLoading();
     List imagesUrls=[];
+
+    var snapshotData = await FirebaseCollection().userCollection.
+    //where('userEmail',isNotEqualTo: FirebaseAuth.instance.currentUser?.email).
+    where('chooseClass',isEqualTo: Provider.of<AddBookDetailProvider>(context,listen:false).selectClass.toString()).get();
 
     //if (file == null) return;
     final bookVideoDestination = 'Book Video/$selectBookVideoName';
@@ -114,6 +119,14 @@ class _AddBookDetailState extends State<AddBookDetail> {
           ).then((value) {
             debugPrint('Successfully Added');
             Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+
+
+            for(var data in snapshotData.docChanges){
+              if(data.doc.get('userEmail') != FirebaseAuth.instance.currentUser?.email){
+                PushNotification().sendPushNotification(data.doc.get('fcmToken'),
+                    bookNameController.text,bookDescriptionController.text);
+              }
+            }
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const BottomNavBarScreen()), (Route<dynamic> route) => false);
@@ -128,6 +141,34 @@ class _AddBookDetailState extends State<AddBookDetail> {
     }
     return imagesUrls;
   }
+
+  /*String className = '';
+
+  Future userClassName() async{
+    var shopQuerySnapshot = await FirebaseCollection().userCollection.where('userEmail',
+        isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
+
+    var snapshotData = await FirebaseCollection().userCollection.
+    where('userEmail',isNotEqualTo: FirebaseAuth.instance.currentUser?.email).
+    where('chooseClass',isEqualTo: Provider.of<AddBookDetailProvider>(context,listen:false).selectClass.toString())
+        .get();
+
+
+    for(var snapShot in snapshotData.docChanges){
+      if(mounted){
+        setState(() {
+          //className = snapShot.doc.get('chooseClass');
+          print('Print Data => ${snapShot.doc.get('chooseClass')} ');
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userClassName();
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -284,6 +325,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                 },
                                 items:  snapshot.selectCourses
                             ),
+
                             const SizedBox(height: 20),
                             appDropDown(
                                 value: snapshot.selectClass,
@@ -291,9 +333,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                 onChanged: (String? newValue) {
                                   snapshot.selectClass = newValue;
                                   snapshot.getSelectedClass;
-                                  setState(() {
-                                    selectedCourses = newValue;
-                                  });
                                 },
                                 items:  snapshot.selectClasses
                             ),
@@ -304,6 +343,16 @@ class _AddBookDetailState extends State<AddBookDetail> {
                               child: Column(
                                 children: [
                                   const SizedBox(height: 20),
+                                  /*appDropDown(
+                                      value: snapshot.selectSemester,
+                                      hint: 'Select Semester',
+                                      onChanged: (String? newValue) {
+                                        snapshot.selectSemester = newValue;
+                                        snapshot.getSemester;
+                                      },
+                                      items:  snapshot.selectSemesters
+                                  ),*/
+
                                   DropdownButtonHideUnderline(
                                     child: DropdownButton2(
                                       iconDisabledColor: Colors.grey,
@@ -311,7 +360,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                       buttonPadding: const EdgeInsets.only(left: 14, right: 14),
                                       buttonDecoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color: Colors.black12.withOpacity(0.1),
+                                        color: const Color(0xD336383E),
                                       ),
                                       itemHeight: 40,
                                       dropdownMaxHeight: 200,
@@ -323,7 +372,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                       scrollbarRadius: const Radius.circular(40),
                                       scrollbarAlwaysShow: true,
                                       value: snapshot.selectSemester,
-                                      hint: const Text('Select Semester', style: TextStyle(fontSize: 13, color: AppColor.whiteColor)),
+                                      hint: const Text('Select Semester', style: TextStyle(fontSize: 12, color: AppColor.whiteColor)),
                                       isExpanded: true,
                                       isDense: true,
                                       iconOnClick: const Icon(Icons.arrow_drop_up,color: AppColor.whiteColor),
@@ -346,6 +395,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                       }).toList(),
                                     ),
                                   ),
+
                                   const SizedBox(height: 4),
                                   const Align(
                                       alignment: Alignment.topRight,
@@ -372,33 +422,22 @@ class _AddBookDetailState extends State<AddBookDetail> {
                             ElevatedButton(
                                 onPressed: () {
                                   selectBookVideo();
-                                },
-                                child: Text('Select Video Clip',style: Theme.of(context).textTheme.subtitle1,)),
+                                  },
+                                child: Text('Select Video Clip',style: Theme.of(context).textTheme.subtitle1,)
+                            ),
                             const SizedBox(height: 3,),
                             Text(selectBookVideoName.replaceAll('image_picker', ''),style: const TextStyle(color: AppColor.whiteColor),),
 
                             const SizedBox(height: 40),
                             ButtonWidget().appButton(
                               text: 'Add',
-                              onTap: () async{
+                              onTap: () {
                                 if(_formKey.currentState!.validate()){
                                   if(imageFileList!.isNotEmpty && file !=null){
-                                    uploadFile(context);
+                                     uploadFile(context);
                                   } else {
-                                    AppUtils.instance.showSnackBar(context, 'All field is required');
+                                     AppUtils.instance.showSnackBar(context, 'All field is required');
                                   }
-                                  // ref.watch(addBookDetailsAuthProvider).addBookDetails(
-                                  //     uId: FirebaseAuth.instance.currentUser!.uid,
-                                  //     userName: nameController.text,
-                                  //     userEmail: '${FirebaseAuth.instance.currentUser?.email}',
-                                  //     userMobile: phoneController.text,
-                                  //     bookName: bookNameController.text, bookImages: imageFileList,
-                                  //     bookVideo: file.toString(), selectedClass: snapshot.selectClass.toString(),
-                                  //     selectedCourse: snapshot.selectCourse.toString(),
-                                  //     selectedSemester: snapshot.selectSemester.toString(),
-                                  //     bookRating: 0, currentUser: '${FirebaseAuth.instance.currentUser?.email}' ,
-                                  //     timestamp: DateTime.now().toString()
-                                  // );
                                 }
                               },
                             ),
@@ -408,8 +447,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
                       );
                     }
                 )
-
-
               ],
             ),
           ),

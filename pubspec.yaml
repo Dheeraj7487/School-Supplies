@@ -27,15 +27,15 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  firebase_core: ^2.0.0
-  cloud_firestore: ^4.0.1
-  firebase_auth: ^4.0.1
+  firebase_core: ^2.1.1
+  cloud_firestore: ^4.0.4
+  firebase_auth: ^4.1.1
 #  flutter_hooks: ^0.18.5+1
 #  flutter_riverpod: ^2.0.2
   provider: ^6.0.4
   shared_preferences: ^2.0.15
   dropdown_button2: ^1.8.5
-  firebase_storage: ^11.0.1
+  firebase_storage: ^11.0.4
   carousel_slider: ^4.1.1
   flutter_rating_bar: ^4.0.1
   file_picker: ^5.2.1
@@ -50,6 +50,10 @@ dependencies:
   flutter_stripe: ^6.0.0
   flutter_spinkit: ^5.1.0
   http: ^0.13.5
+  firebase_messaging: ^14.0.4
+  flutter_local_notifications: ^12.0.3
+  cached_network_image: ^3.2.2
+  stripe_checkout: ^1.0.0
 
   flutter:
     sdk: flutter

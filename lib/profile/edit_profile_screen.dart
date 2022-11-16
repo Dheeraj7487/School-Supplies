@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/login/model/user_model.dart';
 import 'package:school_supplies_hub/widgets/button_widget.dart';
 import '../../Firebase/firebase_collection.dart';
 import 'package:flutter/material.dart';
+import '../add_details/provider/add_book_detail_provider.dart';
 import '../utils/app_color.dart';
+import '../widgets/dropdown_widget.dart';
 import '../widgets/textfield_widget.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -113,11 +116,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               return null;
                             },
                           ),
+
+                          const SizedBox(height: 10,),
+
+                          Consumer<AddBookDetailProvider>(
+                          builder: (BuildContext context, snapshot, Widget? child) {
+                            return appDropDown(
+                                value: data['chooseClass'],
+                                hint: 'Select Class',
+                                onChanged: (String? newValue) {
+                                  snapshot.selectClass = newValue!;
+                                  snapshot.getSelectedClass;
+                                },
+                                items:  snapshot.selectClasses
+                            );
+                          }),
+
                           const SizedBox(height: 40),
                           Align(
                             alignment: Alignment.center,
                             child: ButtonWidget().appButton(
                                 onTap: () async {
+                                  print('dd=> ${Provider.of<AddBookDetailProvider>(context,listen: false).selectClass != null ?
+                                  Provider.of<AddBookDetailProvider>(context,listen: false).selectClass : data['chooseClass']}');
                                   if(formKey.currentState!.validate() ) {
                                     UserModel updateUserDetail = UserModel(
                                       userName: nameController.text.trim(),
@@ -125,6 +146,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       userId: data["userId"],
                                       userEmail: data["userEmail"],
                                       userRating: data["userRating"],
+                                      fcmToken: data['fcmToken'],
+                                      chooseClass: Provider.of<AddBookDetailProvider>(context,listen: false).selectClass != null ?
+                                      Provider.of<AddBookDetailProvider>(context,listen: false).selectClass : data['chooseClass'],
                                       timeStamp: data["timeStamp"],
                                       currentUser: data["currentUser"]
                                     );

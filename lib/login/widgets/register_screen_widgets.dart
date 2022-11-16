@@ -1,12 +1,16 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/login/auth/login_auth.dart';
 import 'package:school_supplies_hub/login/screen/login_screen.dart';
 import 'package:school_supplies_hub/widgets/textfield_widget.dart';
+import '../../add_details/provider/add_book_detail_provider.dart';
 import '../../utils/app_color.dart';
 import '../../utils/app_utils.dart';
 import '../../widgets/button_widget.dart';
+import '../../widgets/dropdown_widget.dart';
 import '../auth/login_provider.dart';
 import '../provider/loading_provider.dart';
 
@@ -27,7 +31,7 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-
+  String? fcmToken;
 
   // @override
   // void dispose() {
@@ -41,8 +45,19 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
   // }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    FirebaseMessaging.instance.getToken().then((value) {
+      debugPrint('Token: $value');
+      setState(() {
+        fcmToken = value;
+      });
+    });
+    super.initState();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
@@ -121,6 +136,24 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
             ),
 
             const SizedBox(height: 20),
+
+            Text('Choose Class',style: Theme.of(context).textTheme.subtitle2,),
+            const SizedBox(height: 5),
+            Consumer<AddBookDetailProvider>(
+                builder: (BuildContext context, snapshot, Widget? child) {
+                  return appDropDown(
+                      value: snapshot.chooseClass,
+                      hint: 'Choose Class',
+                      onChanged: (String? newValue) {
+                        snapshot.chooseClass = newValue!;
+                        snapshot.getChooseClass;
+                      },
+                      items:  snapshot.chooseClasses
+                  );
+                },
+            ),
+
+            const SizedBox(height: 20),
             Text('Password',style: Theme.of(context).textTheme.subtitle2,),
             const SizedBox(height: 5),
             TextFieldWidget().textFieldWidget(
@@ -178,9 +211,6 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
                   ) : const Icon(Icons.visibility_off,
                       color: AppColor.whiteColor)),
               validator: (value) {
-                // if (value!.isEmpty) {
-                //   return 'Enter confirm password!';
-                // }
                 if (value != passwordController.text) {
                   return "Password does Not Match";
                 }
@@ -197,35 +227,44 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
               },
             ),
             const SizedBox(height: 40),
-            ButtonWidget().appButton(
-              text: 'Sign Up',
-              onTap: () async{
-                if(_formKey.currentState!.validate()){
-                  Provider.of<LoadingProvider>(context,listen: false).startLoading();
-                  User? user = await LoginAuth.registerUsingEmailPassword(
-                      name: nameController.text.trim(),
-                      email: emailController.text.trim(),
-                      mobile: phoneController.text.trim(),
-                      password: passwordController.text.trim(),
-                      context: context
-                  );
 
-                  if(user !=null){
-                    LoginProvider().addUserDetail(
-                        uId: "${FirebaseAuth.instance.currentUser?.uid}",
-                        userName: nameController.text.trim(),
-                        userEmail: emailController.text.trim(),
-                        userMobile: phoneController.text.trim(),
-                        rating: 0,
-                        currentUser: "${FirebaseAuth.instance.currentUser?.email}",
-                        timestamp: DateTime.now().toString()).then((value) {
-                      AppUtils.instance.showSnackBar(context, 'Register Successfully');
-                      Provider.of<LoadingProvider>(context,listen: false).stopLoading();
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-                    });
-                  }
-                }
-              },
+
+            Consumer<AddBookDetailProvider>(
+                builder: (BuildContext context, snapshot, Widget? child) {
+                  return ButtonWidget().appButton(
+                    text: 'Sign Up',
+                    onTap: () async{
+                      print('dfdfdf ${Provider.of<AddBookDetailProvider>(context,listen: false).selectClass}');
+                      if(_formKey.currentState!.validate()){
+                        Provider.of<LoadingProvider>(context,listen: false).startLoading();
+                        User? user = await LoginAuth.registerUsingEmailPassword(
+                            name: nameController.text.trim(),
+                            email: emailController.text.trim(),
+                            mobile: phoneController.text.trim(),
+                            password: passwordController.text.trim(),
+                            context: context
+                        );
+
+                        if(user !=null){
+                          LoginProvider().addUserDetail(
+                              uId: "${FirebaseAuth.instance.currentUser?.uid}",
+                              userName: nameController.text.trim(),
+                              userEmail: emailController.text.trim(),
+                              userMobile: phoneController.text.trim(),
+                              fcmToken: fcmToken.toString(),
+                              rating: 0,
+                              chooseClass: snapshot.chooseClass.toString(),
+                              currentUser: "${FirebaseAuth.instance.currentUser?.email}",
+                              timestamp: DateTime.now().toString()).then((value) {
+                            AppUtils.instance.showSnackBar(context, 'Register Successfully');
+                            Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
+                          });
+                        }
+                      }
+                    },
+                  );
+                },
             ),
             const SizedBox(height: 20),
             Row(

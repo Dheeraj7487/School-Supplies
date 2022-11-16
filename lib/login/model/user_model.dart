@@ -3,6 +3,8 @@ class UserModel {
   String? userName;
   String? userEmail;
   String? userMobile;
+  String? chooseClass;
+  String? fcmToken;
   int? userRating;
   String? currentUser;
   String? timeStamp;
@@ -12,6 +14,8 @@ class UserModel {
         this.userName,
         this.userEmail,
         this.userMobile,
+        this.fcmToken,
+        this.chooseClass,
         this.userRating,
         this.currentUser,
         this.timeStamp});
@@ -20,7 +24,9 @@ class UserModel {
     userId = json['userId'];
     userName = json['userName'];
     userEmail = json['userEmail'];
+    chooseClass = json['chooseClass'];
     userMobile = json['userMobile'];
+    fcmToken = json['fcmToken'];
     userRating = json['userRating'];
     currentUser = json['currentUser'];
     timeStamp = json['timeStamp'];
@@ -42,6 +48,8 @@ class UserModel {
     data['userName'] = userName;
     data['userEmail'] = userEmail;
     data['userMobile'] = userMobile;
+    data['chooseClass'] = chooseClass;
+    data['fcmToken'] = fcmToken;
     data['userRating'] = userRating;
     data['currentUser'] = currentUser;
     data['timeStamp'] = timeStamp;

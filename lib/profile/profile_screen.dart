@@ -3,10 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../Firebase/firebase_collection.dart';
 import '../Login/screen/login_screen.dart';
-import '../widgets/button_widget.dart';
+import '../login/auth/login_provider.dart';
 import '../utils/app_color.dart';
 import '../utils/app_utils.dart';
 import 'edit_profile_screen.dart';
+import 'my_orders_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -55,19 +56,82 @@ class ProfileScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
+
                             Positioned(
-                                right: 15,top: 10,
+                                right: 5,
                                 child: GestureDetector(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const EditProfileScreen()));
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: AppColor.whiteColor.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10)
-                                    ),
-                                      child: const Icon(Icons.edit,color: AppColor.whiteColor,size: 20,)),
+                                  onTap: (){},
+                                  child: PopupMenuButton<int>(
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        value: 1,
+                                        child: Row(
+                                          children: const [
+                                            Icon(Icons.person_outline,color: AppColor.whiteColor,size: 20),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text("Edit Profile",style: TextStyle(fontSize: 13))
+                                          ],
+                                        ),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 2,
+                                        child: Row(
+                                          children: const [
+                                            Icon(Icons.rate_review_outlined,color: AppColor.whiteColor,size: 20),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text("My Orders",style: TextStyle(fontSize: 13))
+                                          ],
+                                        ),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 3,
+                                        child: Row(
+                                          children: const [
+                                            Icon(Icons.logout,color: AppColor.whiteColor,size: 20,),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text("Logout",style: TextStyle(fontSize: 13))
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                    offset: const Offset(0, 37),
+                                    color: AppColor.appColor,
+                                    elevation: 2,
+                                    onSelected: (value) {
+                                      if (value == 1) {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(builder: (context)=>const EditProfileScreen()));
+                                      } else if (value == 2) {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(builder: (context)=>const MyOrderScreen()));
+                                      }
+                                      else if (value == 3) {
+                                        FirebaseAuth.instance.signOut()
+                                            .then((value){
+                                          LoginProvider().addUserDetail(
+                                              uId: data['userId'],
+                                              userName: data['userName'],
+                                              userEmail: data['userEmail'], userMobile: data['userMobile'],
+                                              fcmToken: '', rating: data['userRating'],
+                                            currentUser: data['currentUser'], chooseClass: data['chooseClass'],
+                                            timestamp: data['timeStamp'],
+                                          );
+                                        });
+                                        AppUtils.instance.clearPref().then((value) =>
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
+                                                ModalRoute.withName('/')
+                                            ));
+                                      }
+                                    },
+                                  ),
                                 )
                             )
                           ],
@@ -81,16 +145,9 @@ class ProfileScreen extends StatelessWidget {
                               _profileDetail(Icons.email_outlined,data['userEmail']),
                               const SizedBox(height: 10,),
                               _profileDetail(Icons.phone_android_outlined,data['userMobile']),
-                              const SizedBox(height: 50),
-                              ButtonWidget().appButton(
-                                text: 'Logout',
-                                onTap: (){
-                                  FirebaseAuth.instance.signOut();
-                                  AppUtils.instance.clearPref().then((value) {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-                                  });
-                                },
-                              ),
+                              const SizedBox(height: 10,),
+                              _profileDetail(Icons.supervised_user_circle_sharp,data['chooseClass']),
+                              const SizedBox(height: 20,),
                             ],
                           ),
                         ),

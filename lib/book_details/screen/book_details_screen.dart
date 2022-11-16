@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 import 'package:intl/intl.dart';
 import '../../Firebase/firebase_collection.dart';
-import '../../payment/payment_screen.dart';
+import '../../payment/payment_controller.dart';
 import '../../utils/app_color.dart';
 import '../../video_player/video_player_screen.dart';
 import 'give_rating_screen.dart';
 
-//ignore: must_be_immutable
 class BookDetailScreen extends StatefulWidget {
   dynamic snapshotData;
   List bookImages;
@@ -22,6 +22,7 @@ class BookDetailScreen extends StatefulWidget {
 class _BookDetailScreenState extends State<BookDetailScreen> {
 
   int bookIndex = 0;
+  Map<String, dynamic>? paymentIntentData;
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +40,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Row(
                     children: [
                       const Icon(Icons.rate_review_outlined,color: AppColor.whiteColor,size: 20),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
                       Text("Review",style: Theme.of(context).textTheme.subtitle1)
                     ],
                   ),
                 ),
               ],
               offset: const Offset(0, 37),
-             // icon: Image.asset(AppImage.menu,height: 20,width: 17,color: AppColor.whiteColor,),
               color: AppColor.appColor,
               elevation: 2,
               onSelected: (value) {
@@ -195,11 +193,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                 //    color: AppColor.greyColor,
-                    borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: AppColor.greyColor
                   ),
-
                 ),
                 child: Row(
                   children: [
@@ -282,9 +279,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                           child: Image.network(snapshot.data!.docs[index]['bookImages'][0],
                                               height: 120,width: double.infinity,fit: BoxFit.fill),
                                         ),
-                                        const SizedBox(height: 5),
-                                        Text(snapshot.data!.docs[index]['bookName'],
-                                            style: Theme.of(context).textTheme.headline4,textAlign:TextAlign.center,maxLines: 2,overflow: TextOverflow.ellipsis),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(3.0,5,3,0),
+                                          child: Text(snapshot.data!.docs[index]['bookName'],
+                                              style: Theme.of(context).textTheme.headline4,textAlign:TextAlign.center,maxLines: 2,overflow: TextOverflow.ellipsis),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -345,9 +344,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                           child: Image.network(snapshot.data!.docs[index]['bookImages'][1],
                                               height: 120,width: double.infinity,fit: BoxFit.fill),
                                         ),
-                                        const SizedBox(height: 5),
-                                        Text(snapshot.data!.docs[index]['bookName'],
-                                            style: Theme.of(context).textTheme.headline4,textAlign:TextAlign.center,maxLines: 2,overflow: TextOverflow.ellipsis),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(3.0,5,3,0),
+                                          child: Text(snapshot.data!.docs[index]['bookName'],
+                                              style: Theme.of(context).textTheme.headline4,textAlign:TextAlign.center,maxLines: 2,overflow: TextOverflow.ellipsis),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -366,14 +367,70 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
       ),
       bottomNavigationBar: GestureDetector(
-        onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const GooglePay()));
-          // Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentScreen()));
+        onTap: () async{
+
+          int amount = int.parse(widget.snapshotData['bookPrice']);
+          String amount1 = widget.snapshotData['bookPrice'];
+         // int amount1 = widget.snapshotData['bookPrice'];
+          if(amount >= 500){
+            //amount = amount - amount*10/100;
+            print('dsdd +> ${amount1}');
+            setState(() {});
+          } else {
+            print('Not Added Discount');
+          }
+
+          var userData = await FirebaseCollection().userCollection.
+          where('userEmail',isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
+
+          for(var data in userData.docChanges) {
+            PaymentController().makePayment(
+                amount: amount1,
+                currency: 'INR',context: context,
+                publisherName: '${widget.snapshotData['publisherName']}',
+                userEmail: '${data.doc.get('userEmail')}',
+                userMobile: '${data.doc.get('userMobile')}',
+                bookName: '${widget.snapshotData['bookName']}',
+                selectedClass: '${widget.snapshotData['selectedClass']}',
+                bookVideo: '${widget.snapshotData['bookVideo']}',
+                bookImage: widget.bookImages,
+                selectedCourse: '${widget.snapshotData['selectedCourse']}',
+                selectedSemester: '${widget.snapshotData['selectedSemester']}',
+                userAddress: '',
+                authorName: '${widget.snapshotData['bookName']}',
+                timeStamp: DateTime.now().toString()
+            );
+
+            await stripe.Stripe.instance
+              .initPaymentSheet(paymentSheetParameters: stripe.SetupPaymentSheetParameters(
+            customerId: paymentIntentData?['customer'],
+            setupIntentClientSecret: paymentIntentData?['client_secret'],
+            paymentIntentClientSecret: paymentIntentData?['client_secret'],
+            customerEphemeralKeySecret: paymentIntentData?['ephemeralKey'],
+            style: ThemeMode.dark,
+            billingDetails: stripe.BillingDetails(
+                name: "${data.doc.get('userName')}",
+                email: 'mailto:${data.doc.get('userEmail')}',
+                phone: '${data.doc.get('userMobile')}',
+              /*address: stripe.Address(
+                    line1: 'shivranjni',
+                    line2: 'shivranjni',
+                    state: 'Gujarat',
+                    postalCode: '12345',
+                    city: 'Germany',
+                    country: 'Germany')*/
+            ),
+          )).then((value) async {
+            await stripe.Stripe.instance.presentPaymentSheet().then((value) {});
+          });
+          }
+          // Navigator.push(context, MaterialPageRoute(builder: (context)=>const CheckOutPayment()));
         },
         child: Container(
           padding: const EdgeInsets.all(15),
           color: AppColor.whiteColor,
-          child: const Text('Buy Now',style: TextStyle(color: AppColor.appColor,fontSize: 16), textAlign: TextAlign.center,),
+          child: const Text('Buy Now',style: TextStyle(color: AppColor.appColor,fontSize: 16),
+            textAlign: TextAlign.center,),
         ),
       ),
     );

@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../Firebase/firebase_collection.dart';
 import '../../book_details/screen/book_details_screen.dart';
-import '../../shimmers/reading_shimmers.dart';
+import '../../shimmers/horizontal_shimmers.dart';
 import '../../utils/app_color.dart';
 
 class LatestBookWidget extends StatelessWidget {
@@ -34,7 +36,7 @@ class LatestBookWidget extends StatelessWidget {
             stream: FirebaseCollection().addBookCollection.snapshots(),
             builder: (context,AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
               if(snapshot.hasError){
-                return const Center(child: ReadingShimmers());
+                return Center(child: HorizontalShimmers(height: 175,));
               } else if(snapshot.hasData){
                 return SizedBox(
                   height: 175,
@@ -60,14 +62,40 @@ class LatestBookWidget extends StatelessWidget {
                                   children: [
                                     ClipRRect(
                                         borderRadius: BorderRadius.circular(20),
-                                        child: Image.network('https://png.pngtree.com/element_our/20190530/ourlarge/pngtree-e-commerce-fluid-gradient-border-image_1250921.jpg',
-                                            height: 150)),
+                                        child:
+                                        CachedNetworkImage(
+                                          imageUrl: "https://png.pngtree.com/element_our/20190530/ourlarge/pngtree-e-commerce-fluid-gradient-border-image_1250921.jpg",
+                                          height: 150,
+                                          placeholder: (context, url) => Shimmer.fromColors(
+                                            highlightColor: AppColor.appColor,
+                                            baseColor: Colors.grey.shade100,
+                                            period: const Duration(seconds: 2),
+                                            child: SizedBox(
+                                              height: MediaQuery.of(context).size.height/3,
+                                              width: MediaQuery.of(context).size.width,
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                                        )
+                                    ),
                                     Container(
                                       margin: const EdgeInsets.fromLTRB(3,15,3,0),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
-                                        child: Image.network(snapshot.data?.docs[index]['bookImages'][0],
-                                            height: 120,width: double.infinity,fit: BoxFit.fill),
+                                        child: CachedNetworkImage(
+                                          imageUrl: "${snapshot.data?.docs[index]['bookImages'][0]}",
+                                          height: 120,width: double.infinity,fit: BoxFit.fill,
+                                          placeholder: (context, url) => Shimmer.fromColors(
+                                            highlightColor: AppColor.appColor,
+                                            baseColor: Colors.grey.shade100,
+                                            period: const Duration(seconds: 2),
+                                            child: const SizedBox(
+                                                height: 120,width: double.infinity
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) => Image.network("https://lh6.googleusercontent.com/Bu-pRqU_tWZV7O3rJ5nV1P6NjqFnnAs8kVLC5VGz_Kf7ws0nDUXoGTc7pP87tyUCfu8VyXi0YviIm7CxAISDr2lJSwWwXQxxz98qxVfMcKTJfLPqbcfhn-QEeOowjrlwX1LYDFJN",
+                                              height: 120,width: double.infinity,fit: BoxFit.fill,),
+                                        )
                                       ),
                                     ),
                                   ],
@@ -83,7 +111,7 @@ class LatestBookWidget extends StatelessWidget {
                   ),
                 );
               } else {
-                return const Center(child: ReadingShimmers());
+                return Center(child: HorizontalShimmers(height: 160,));
               }
             }
         )
