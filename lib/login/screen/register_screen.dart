@@ -28,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: RegisterScreenWidget())
                   :   const Scrollbar(
                       child: SizedBox(
-                        width: 300,
+                        width: 600,
                         child: RegisterScreenWidget(),
                       ),
                     )),

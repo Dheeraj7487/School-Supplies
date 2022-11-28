@@ -30,8 +30,7 @@
       "merchantName": "Dheeraj Prajapat"
     },
     "transactionInfo": {
-      "countryCode": "US",
-      "currencyCode": "USD"
+      "currencyCode": "INR"
     }
   }
 }

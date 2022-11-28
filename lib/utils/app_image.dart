@@ -12,5 +12,14 @@ class AppImage{
   static const firstClass="assets/images/first_year.jpg";
   static const secondClass="assets/images/second_year.jpeg";
   static const thirdClass="assets/images/third_year.jpeg";
-
+  static const menu="assets/images/menu.png";
+  static const address="assets/images/address.png";
+  static const email="assets/images/mail.png";
+  static const classIcon="assets/images/class.png";
+  static const mobile="assets/images/mobile.png";
+  static const userName="assets/images/userName.png";
+  static const googlePay="assets/images/google_pay.png";
+  static const paytm="assets/images/paytm.png";
+  static const razorpay="assets/images/razorpay.png";
+  static const stripe="assets/images/stripe.png";
 }

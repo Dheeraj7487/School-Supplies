@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BuyBookDetailModel {
   String? userId;
@@ -9,6 +8,8 @@ class BuyBookDetailModel {
   String? bookVideo;
   String? selectedClass;
   String? bookPrice;
+  int? discountPercentage;
+  int? bookAvailable;
   String? selectedCourse;
   String? selectedSemester;
   String? timeStamp;
@@ -24,6 +25,8 @@ class BuyBookDetailModel {
          this.bookImages,
          this.bookVideo,
          this.bookPrice,
+         this.bookAvailable,
+         this.discountPercentage,
          this.selectedClass,
          this.selectedCourse,
          this.selectedSemester,
@@ -40,6 +43,8 @@ class BuyBookDetailModel {
     bookImages = json['bookImages'];
     bookVideo = json['bookVideo'];
     bookPrice = json['bookPrice'];
+    discountPercentage = json['discountPercentage'];
+    bookAvailable = json['bookAvailable'];
     selectedClass = json['selectedClass'];
     selectedCourse = json['selectedCourse'];
     selectedSemester = json['selectedSemester'];
@@ -57,6 +62,8 @@ class BuyBookDetailModel {
     data['bookImages'] = bookImages;
     data['bookVideo'] = bookVideo;
     data['bookPrice'] = bookPrice;
+    data['bookAvailable'] = bookAvailable;
+    data['discountPercentage'] = discountPercentage;
     data['selectedClass'] = selectedClass;
     data['selectedCourse'] = selectedCourse;
     data['selectedSemester'] = selectedSemester;

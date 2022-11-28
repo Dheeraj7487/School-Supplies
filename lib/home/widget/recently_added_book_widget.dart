@@ -26,8 +26,8 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                baseColor: Colors.white,
                child: Container(
                  padding: const EdgeInsets.only(left: 20,right: 20),
-                   height: MediaQuery.of(context).size.height/3,
-                   width: MediaQuery.of(context).size.width,
+                 height: MediaQuery.of(context).size.height/3,
+                 width: MediaQuery.of(context).size.width,
                  decoration: BoxDecoration(
                      color: Colors.white,
                      borderRadius: BorderRadius.circular(10)
@@ -40,7 +40,7 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
            return const SizedBox();
          } else if(snapshot.hasData){
           return Visibility(
-            visible: snapshot.data!.docChanges.length >=3 ? true : false,
+            visible: snapshot.data!.docs.length >=3 ? true : false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -113,23 +113,24 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                             bottomRight: Radius.circular(10),
                                           )
                                       ),
-                                      child: Text(snapshot.data?.docs[index]['bookName'],overflow: TextOverflow.ellipsis,))
+                                      child: Text(snapshot.data?.docs[index]['bookName'],overflow: TextOverflow.ellipsis,)),
                               ),
 
                               Positioned(
-                                  bottom : 10,right: 20,
+                                  bottom : 10,
+                                  left: MediaQuery.of(context).size.width/2.5,
                                   child: Row(
                                     children: List.generate(
                                       3, (index1) {
                                             return Container(
                                               margin: const EdgeInsets.all(4),
-                                              width: 6,
-                                              height: 6,
+                                              width: index == index1 ? 10 : 7,
+                                              height:  index == index1 ? 10 : 7,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(10),
                                                 color: index == index1
                                                     ? AppColor.redColor
-                                                    : Colors.white,
+                                                    : Colors.white70,
                                               ),
                                             );
                                           }

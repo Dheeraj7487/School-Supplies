@@ -6,6 +6,7 @@ import 'package:school_supplies_hub/Firebase/firebase_collection.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../book_details/screen/book_details_screen.dart';
 import '../../utils/app_color.dart';
+import '../../widgets/responsive_widget.dart';
 
 class RecentBookWidget extends StatelessWidget {
   const RecentBookWidget({Key? key}) : super(key: key);
@@ -39,8 +40,8 @@ class RecentBookWidget extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 4,
                     mainAxisSpacing: 10,
                     childAspectRatio: 1.1,
                     mainAxisExtent: 230

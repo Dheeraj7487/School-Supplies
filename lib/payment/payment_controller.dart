@@ -5,6 +5,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 import 'package:school_supplies_hub/utils/app_utils.dart';
 
+import '../add_details/auth/add_book_details_auth.dart';
 import '../book_details/auth/buy_book_detail_auth.dart';
 
 class PaymentController{
@@ -12,14 +13,20 @@ class PaymentController{
 
   Future<void> makePayment(
       {required String amount, required String currency,
-        required String publisherName,required String userEmail,
+        required String publisherName,required String userEmail,required String userId,
         required String userMobile,required String bookName,
         required List bookImage,
         required String bookVideo,
         required String selectedClass,
         required String selectedCourse,required String selectedSemester,
         required String userAddress,
+        required int discountPercentage,
+        required String bookPrice,
         required String authorName,
+        required double bookRating,
+        required String currentUser,
+        required String bookDescription,
+        required int bookAvailable,
         required String timeStamp,
         required BuildContext context}) async {
     try {
@@ -39,6 +46,7 @@ class PaymentController{
 
         try {
           await Stripe.instance.presentPaymentSheet();
+          Navigator.pop(context);
           AppUtils.instance.showSnackBar(context, 'Payment Success');
 
           BuyBookDetailAuth().buyBookDetails(
@@ -48,12 +56,36 @@ class PaymentController{
               userMobile: userMobile,
               bookName: bookName,
               price: amount,
+              discountPercentage : discountPercentage,
               bookVideo: bookVideo,bookImages: bookImage,
               selectedClass: selectedClass,
               selectedCourse: selectedCourse,
               selectedSemester: selectedSemester,
               userAddress: userAddress, authorName: authorName,
-              timestamp: timeStamp);
+              timestamp: timeStamp, bookAvailable: bookAvailable);
+
+
+          AddBookDetailsAuth().addBookDetails(
+            uId: userId,
+            publisherName: publisherName,
+            userEmail: userEmail,
+            userMobile: userMobile,
+            bookName: bookName,
+            price: bookPrice,
+            discountPercentage : discountPercentage,
+            bookVideo: bookVideo,bookImages: bookImage,
+            selectedClass: selectedClass,
+            selectedCourse: selectedCourse,
+            selectedSemester: selectedSemester,
+            authorName: authorName,
+            timestamp: timeStamp,
+            bookRating: bookRating,
+            currentUser: currentUser,
+            bookDescription: bookDescription,
+            bookAvailable:  bookAvailable,
+          );
+
+
           //debugPrint('Payment Success');
         } on Exception catch (e) {
           if (e is StripeException) {
@@ -74,26 +106,7 @@ class PaymentController{
     }
   }
 
-  /*displayPaymentSheet(context) async {
-    try {
-      await Stripe.instance.presentPaymentSheet();
-      AppUtils.instance.showSnackBar(context, 'Payment Success');
 
-      //debugPrint('Payment Success');
-    } on Exception catch (e) {
-      if (e is StripeException) {
-        AppUtils.instance.showSnackBar(context, '${e.error.localizedMessage}');
-        debugPrint("Error from Stripe: ${e.error.localizedMessage}");
-      } else {
-
-        debugPrint("Unforeseen error: $e");
-      }
-    } catch (e) {
-      debugPrint("exception:$e");
-    }
-  }*/
-
-  //  Future<Map<String, dynamic>>
   createPaymentIntent(String amount, String currency) async {
     try {
       Map<String, dynamic> body = {
@@ -109,7 +122,7 @@ class PaymentController{
             'Content-Type': 'application/x-www-form-urlencoded'
           });
       debugPrint("${response.statusCode}");
-      print(jsonDecode(response.body));
+      debugPrint(jsonDecode(response.body));
       return jsonDecode(response.body);
     } catch (err) {
       debugPrint('err charging user: ${err.toString()}');

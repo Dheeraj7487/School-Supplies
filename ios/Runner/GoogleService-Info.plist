@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>280636322532-juu5634u53eb4q64tv9plcioounj08n9.apps.googleusercontent.com</string>
+	<string>280636322532-7uac9n49vm6ekfdu2ev53fcln29ljpfn.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.280636322532-juu5634u53eb4q64tv9plcioounj08n9</string>
+	<string>com.googleusercontent.apps.280636322532-7uac9n49vm6ekfdu2ev53fcln29ljpfn</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCLhE8c25w4TDiGcNxET4YW3DtgxQgFAyE</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>comelsnerschoolsupplieshub</string>
+	<string>com.elsner.schoolSuppliesHub</string>
 	<key>PROJECT_ID</key>
 	<string>schoolsupplies-5cf3f</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:280636322532:ios:3b8dd4b13b3061ceb032f1</string>
+	<string>1:280636322532:ios:8f208854034a7ea8b032f1</string>
 </dict>
 </plist>

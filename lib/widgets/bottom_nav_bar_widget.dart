@@ -1,5 +1,8 @@
-import '../add_details/add_book_details_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+import '../Firebase/firebase_collection.dart';
 import '../book_category/screen/book_category_class_screen.dart';
+import '../book_details/screen/book_details_screen.dart';
 import '../book_notification_detail/screen/book_notification_details_screen.dart';
 import '../home/screen/home_screen.dart';
 import '../my_library/screen/my_library_screen.dart';
@@ -39,6 +42,20 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
     // TODO: implement initState
     super.initState();
     PushNotification().getNotification(context);
+
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) async {
+      if (message != null) {
+        var notificationData = await FirebaseCollection().addBookCollection.get();
+
+        for(var data in notificationData.docChanges){
+          if(data.doc.get('bookName') == message.data.values.last
+              && data.doc.get('currentUser') == message.data.values.first){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                BookDetailScreen(snapshotData: data.doc, bookImages: data.doc.get('bookImages'))));
+          }
+        }
+      }
+    });
   }
   @override
   Widget build(BuildContext context) {

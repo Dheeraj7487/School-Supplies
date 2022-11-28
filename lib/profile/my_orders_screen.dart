@@ -28,11 +28,11 @@ class MyOrderScreen extends StatelessWidget {
             return  const Center(child: Text("No Orders"));
           } else if(snapshot.hasData){
             return ListView.builder(
-                itemCount: snapshot.data?.docChanges.length,
+                itemCount: snapshot.data?.docs.length,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.fromLTRB(10.0,10,10,10),
+                    padding: const EdgeInsets.fromLTRB(10.0,5,10,5),
                     child: Card(
                       color: AppColor.greyColor.withOpacity(0.2),
                       child: Container(
@@ -65,8 +65,8 @@ class MyOrderScreen extends StatelessWidget {
                                             style: Theme.of(context).textTheme.headline4,
                                             maxLines: 1,overflow: TextOverflow.ellipsis),
                                         const SizedBox(height: 2),
-                                        const Text("IIFCO Office, Shivranjani Ahmedabad (300024)",
-                                            style : TextStyle(color: AppColor.greyColor,fontSize: 10),maxLines: 2,overflow: TextOverflow.ellipsis),
+                                        Text(snapshot.data?.docs[index]['userAddress'],
+                                            style : const TextStyle(color: AppColor.greyColor,fontSize: 10),maxLines: 2,overflow: TextOverflow.ellipsis),
                                       ],
                                     ),
                                   ),
@@ -129,7 +129,7 @@ class MyOrderScreen extends StatelessWidget {
                                   children: [
                                     Text('₹ ${snapshot.data?.docs[index]['bookPrice']}',style: const TextStyle(fontSize: 12)),
                                     const SizedBox(height: 5),
-                                    const Text('10.0%',style: TextStyle(fontSize: 12)),
+                                    Text('${snapshot.data?.docs[index]['discountPercentage']}.0%',style: const TextStyle(fontSize: 12)),
                                     const SizedBox(height: 3),
                                     Container(width: 50,height: 1,color: AppColor.whiteColor,),
                                   ],
@@ -143,7 +143,7 @@ class MyOrderScreen extends StatelessWidget {
                                 const Text('Total',
                                   style: TextStyle(color: AppColor.redColor,fontWeight: FontWeight.w500)),
                                 Text('₹ ${double.parse(snapshot.data?.docs[index]['bookPrice']) -
-                                    double.parse(snapshot.data?.docs[index]['bookPrice'])*10/100}',
+                                    double.parse(snapshot.data?.docs[index]['bookPrice'])*snapshot.data?.docs[index]['discountPercentage']/100}',
                                   style: Theme.of(context).textTheme.headline3),
                               ],
                             ),
@@ -153,8 +153,8 @@ class MyOrderScreen extends StatelessWidget {
                               children: [
                                 Text('You Save :',
                                   style: Theme.of(context).textTheme.subtitle1),
-                                SizedBox(width: 10,),
-                                Text('₹ ${double.parse(snapshot.data?.docs[index]['bookPrice'])*10/100}',
+                                const SizedBox(width: 10,),
+                                Text('₹ ${double.parse(snapshot.data?.docs[index]['bookPrice'])*snapshot.data?.docs[index]['discountPercentage']/100}',
                                   style: Theme.of(context).textTheme.subtitle2),
                               ],
                             ),

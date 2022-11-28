@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:school_supplies_hub/book_details/model/buy_book_details_model.dart';
 import '../../firebase/firebase_collection.dart';
@@ -7,12 +6,14 @@ class BuyBookDetailAuth{
 
   Future<void> buyBookDetails(
       {
-        required String uId,
+        String? uId,
         required String publisherName,
         required String userEmail,
         required String userMobile,
         required String bookName,
         required String price,
+        required int bookAvailable,
+        required int discountPercentage,
         required List bookImages,
         required String bookVideo,
         required String selectedClass,
@@ -31,6 +32,8 @@ class BuyBookDetailAuth{
       authorName: authorName,
       bookImages: bookImages,
       bookPrice: price,
+      bookAvailable: bookAvailable,
+      discountPercentage: discountPercentage,
       bookVideo: bookVideo,
       selectedClass: selectedClass,
       selectedCourse: selectedCourse,
@@ -38,7 +41,7 @@ class BuyBookDetailAuth{
       userAddress: userAddress,
       timeStamp: timestamp,
     );
-    FirebaseCollection().buyBookCollection.doc('$userEmail$bookName').set(buyBookDetailModel.toJson()).whenComplete(() => debugPrint("Successfully order"))
+    FirebaseCollection().buyBookCollection.doc('$userEmail$bookName$bookAvailable').set(buyBookDetailModel.toJson()).whenComplete(() => debugPrint("Successfully order"))
         .catchError((e) => debugPrint(e));
   }
 }

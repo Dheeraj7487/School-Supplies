@@ -13,7 +13,7 @@ import 'login/screen/splash_screen.dart';
 const stripePublishableKey =  "pk_test_51LiBiMSA1JiaZapdYWXElEllmQ0MjwJNhmXjAyIsHVp5ev6Zv4DFOmg0lVBRzQ2whpZHhDOQQrtftbuNAATE7ggA00xTK2iHGW";
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling a background message ${message.messageId}');
+  debugPrint('Handling a background message ${message.messageId}');
 }
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -27,8 +27,16 @@ FlutterLocalNotificationsPlugin();
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-   Stripe.publishableKey = stripePublishableKey;
+  await Firebase.initializeApp(
+    // options: const FirebaseOptions(
+    //     apiKey: "AIzaSyC3PGIPxVuPowD6bTyJ6uQ2mlJMRyfSljo",
+    //     authDomain: "schoolsupplies-5cf3f.firebaseapp.com",
+    //     projectId: "schoolsupplies-5cf3f",
+    //     storageBucket: "schoolsupplies-5cf3f.appspot.com",
+    //     messagingSenderId: "280636322532",
+    //     appId: "1:280636322532:web:9a3023a6386a44f7b032f1")
+  );
+  Stripe.publishableKey = stripePublishableKey;
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_supplies_hub/widgets/responsive_widget.dart';
 
 import '../../utils/app_color.dart';
 import '../../utils/app_image.dart';
@@ -38,8 +39,8 @@ class BookCategoryScreen extends StatelessWidget {
                 child: Text('Choose Class',style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500)),
               ),
               GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 3,
                       mainAxisSpacing: 10,
                       childAspectRatio: 1.1,
                       mainAxisExtent: 160

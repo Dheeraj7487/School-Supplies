@@ -21,7 +21,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
-  
+  TextEditingController addressController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 
@@ -118,6 +119,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
 
                           const SizedBox(height: 10,),
+                          TextFieldWidget().textFieldWidget(
+                            controller: addressController..text = data['userAddress'],
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            counterText: "",
+                            hintText: "Enter Your Address",
+                            maxLines: 3,
+                            prefixIcon: const Icon(Icons.location_city_outlined,color: AppColor.whiteColor),
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.trim().isEmpty) {
+                                return 'Please enter address';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 10,),
 
                           Consumer<AddBookDetailProvider>(
                           builder: (BuildContext context, snapshot, Widget? child) {
@@ -137,18 +157,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             alignment: Alignment.center,
                             child: ButtonWidget().appButton(
                                 onTap: () async {
-                                  print('dd=> ${Provider.of<AddBookDetailProvider>(context,listen: false).selectClass != null ?
-                                  Provider.of<AddBookDetailProvider>(context,listen: false).selectClass : data['chooseClass']}');
                                   if(formKey.currentState!.validate() ) {
                                     UserModel updateUserDetail = UserModel(
                                       userName: nameController.text.trim(),
                                       userMobile: mobileController.text.trim(),
                                       userId: data["userId"],
+                                      userAddress: addressController.text.toString(),
                                       userEmail: data["userEmail"],
                                       userRating: data["userRating"],
                                       fcmToken: data['fcmToken'],
-                                      chooseClass: Provider.of<AddBookDetailProvider>(context,listen: false).selectClass != null ?
-                                      Provider.of<AddBookDetailProvider>(context,listen: false).selectClass : data['chooseClass'],
+                                      chooseClass: Provider.of<AddBookDetailProvider>(context,listen: false).selectClass ?? data['chooseClass'],
                                       timeStamp: data["timeStamp"],
                                       currentUser: data["currentUser"]
                                     );

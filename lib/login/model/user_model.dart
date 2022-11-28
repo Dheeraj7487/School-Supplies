@@ -3,6 +3,7 @@ class UserModel {
   String? userName;
   String? userEmail;
   String? userMobile;
+  String? userAddress;
   String? chooseClass;
   String? fcmToken;
   int? userRating;
@@ -14,6 +15,7 @@ class UserModel {
         this.userName,
         this.userEmail,
         this.userMobile,
+        this.userAddress,
         this.fcmToken,
         this.chooseClass,
         this.userRating,
@@ -26,21 +28,12 @@ class UserModel {
     userEmail = json['userEmail'];
     chooseClass = json['chooseClass'];
     userMobile = json['userMobile'];
+    userAddress = json['userAddress'];
     fcmToken = json['fcmToken'];
     userRating = json['userRating'];
     currentUser = json['currentUser'];
     timeStamp = json['timeStamp'];
   }
-
-  // Map<String, dynamic> toMap() {
-  //   return {
-  //     "messageid": messageid,
-  //     "sender": sender,
-  //     "text": text,
-  //     "seen": seen,
-  //     "timeStamp": timeStamp
-  //   };
-  // }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -48,6 +41,7 @@ class UserModel {
     data['userName'] = userName;
     data['userEmail'] = userEmail;
     data['userMobile'] = userMobile;
+    data['userAddress'] = userAddress;
     data['chooseClass'] = chooseClass;
     data['fcmToken'] = fcmToken;
     data['userRating'] = userRating;

@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -29,20 +28,10 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   String? fcmToken;
-
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   super.dispose();
-  //   nameController.dispose();
-  //   emailController.dispose();
-  //   phoneController.dispose();
-  //   passwordController.dispose();
-  //   confirmPasswordController.dispose();
-  // }
 
   @override
   void initState() {
@@ -130,6 +119,23 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
                     value.isEmpty ||
                     value.trim().isEmpty) {
                   return 'Please enter phone number';
+                }
+                return null;
+              },
+            ),
+
+            const SizedBox(height: 20),
+            Text('Address',style: Theme.of(context).textTheme.subtitle2,),
+            const SizedBox(height: 5),
+            TextFieldWidget().textFieldWidget(
+              controller: addressController,
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.text,
+              hintText: "Enter Address",
+              prefixIcon: const Icon(Icons.villa_outlined,color: AppColor.whiteColor),
+              validator: (value) {
+                if (value == null || value.isEmpty || value.trim().isEmpty) {
+                  return 'Please enter address';
                 }
                 return null;
               },
@@ -234,7 +240,7 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
                   return ButtonWidget().appButton(
                     text: 'Sign Up',
                     onTap: () async{
-                      print('dfdfdf ${Provider.of<AddBookDetailProvider>(context,listen: false).selectClass}');
+                      debugPrint('Selected Class ${Provider.of<AddBookDetailProvider>(context,listen: false).selectClass}');
                       if(_formKey.currentState!.validate()){
                         Provider.of<LoadingProvider>(context,listen: false).startLoading();
                         User? user = await LoginAuth.registerUsingEmailPassword(
@@ -251,6 +257,7 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
                               userName: nameController.text.trim(),
                               userEmail: emailController.text.trim(),
                               userMobile: phoneController.text.trim(),
+                              userAddress: addressController.text.trim(),
                               fcmToken: fcmToken.toString(),
                               rating: 0,
                               chooseClass: snapshot.chooseClass.toString(),
@@ -293,6 +300,7 @@ class _RegisterScreenWidgetState extends State<RegisterScreenWidget> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

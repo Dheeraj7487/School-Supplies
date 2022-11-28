@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:school_supplies_hub/utils/app_image.dart';
 import '../Firebase/firebase_collection.dart';
 import '../Login/screen/login_screen.dart';
 import '../login/auth/login_provider.dart';
@@ -59,79 +60,80 @@ class ProfileScreen extends StatelessWidget {
 
                             Positioned(
                                 right: 5,
-                                child: GestureDetector(
-                                  onTap: (){},
-                                  child: PopupMenuButton<int>(
-                                    itemBuilder: (context) => [
-                                      PopupMenuItem(
-                                        value: 1,
-                                        child: Row(
-                                          children: const [
-                                            Icon(Icons.person_outline,color: AppColor.whiteColor,size: 20),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text("Edit Profile",style: TextStyle(fontSize: 13))
-                                          ],
-                                        ),
+                                child: PopupMenuButton<int>(
+                                  offset: const Offset(0, 37),
+                                  color: AppColor.appColor,
+                                  elevation: 2,
+                                  icon: Image.asset(AppImage.menu,height: 15,width: 15,color: AppColor.whiteColor,),
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 1,
+                                      child: Row(
+                                        children: const [
+                                          Icon(Icons.person_outline,color: AppColor.whiteColor,size: 20),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text("Edit Profile",style: TextStyle(fontSize: 13))
+                                        ],
                                       ),
-                                      PopupMenuItem(
-                                        value: 2,
-                                        child: Row(
-                                          children: const [
-                                            Icon(Icons.rate_review_outlined,color: AppColor.whiteColor,size: 20),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text("My Orders",style: TextStyle(fontSize: 13))
-                                          ],
-                                        ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 2,
+                                      child: Row(
+                                        children: const [
+                                          Icon(Icons.rate_review_outlined,color: AppColor.whiteColor,size: 20),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text("My Orders",style: TextStyle(fontSize: 13))
+                                        ],
                                       ),
-                                      PopupMenuItem(
-                                        value: 3,
-                                        child: Row(
-                                          children: const [
-                                            Icon(Icons.logout,color: AppColor.whiteColor,size: 20,),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text("Logout",style: TextStyle(fontSize: 13))
-                                          ],
-                                        ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 3,
+                                      child: Row(
+                                        children: const [
+                                          Icon(Icons.logout,color: AppColor.whiteColor,size: 20,),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text("Logout",style: TextStyle(fontSize: 13))
+                                        ],
                                       ),
-                                    ],
-                                    offset: const Offset(0, 37),
-                                    color: AppColor.appColor,
-                                    elevation: 2,
-                                    onSelected: (value) {
-                                      if (value == 1) {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context)=>const EditProfileScreen()));
-                                      } else if (value == 2) {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context)=>const MyOrderScreen()));
-                                      }
-                                      else if (value == 3) {
-                                        FirebaseAuth.instance.signOut()
-                                            .then((value){
-                                          LoginProvider().addUserDetail(
-                                              uId: data['userId'],
-                                              userName: data['userName'],
-                                              userEmail: data['userEmail'], userMobile: data['userMobile'],
-                                              fcmToken: '', rating: data['userRating'],
-                                            currentUser: data['currentUser'], chooseClass: data['chooseClass'],
-                                            timestamp: data['timeStamp'],
-                                          );
-                                        });
-                                        AppUtils.instance.clearPref().then((value) =>
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
-                                                ModalRoute.withName('/')
-                                            ));
-                                      }
-                                    },
-                                  ),
+                                    ),
+                                  ],
+                                  onSelected: (value) {
+                                    if (value == 1) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context)=>const EditProfileScreen()));
+                                    }
+                                    else if (value == 2) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context)=>const MyOrderScreen()));
+                                    }
+                                    else if (value == 3) {
+                                      FirebaseAuth.instance.signOut()
+                                          .then((value){
+                                        LoginProvider().addUserDetail(
+                                            uId: data['userId'],
+                                            userName: data['userName'],
+                                          userAddress: data['userAddress'],
+                                            userEmail: data['userEmail'], userMobile: data['userMobile'],
+                                            fcmToken: '', rating: data['userRating'],
+                                          currentUser: data['currentUser'], chooseClass: data['chooseClass'],
+                                          timestamp: data['timeStamp'],
+                                        );
+                                      });
+                                      AppUtils.instance.clearPref().then((value) =>
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
+                                              ModalRoute.withName('/')
+                                          ));
+                                    }
+
+                                  },
                                 )
                             )
                           ],
@@ -140,13 +142,15 @@ class ProfileScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 20,right: 20,top: 20,bottom: 30),
                           child: Column(
                             children: [
-                              _profileDetail(Icons.person_outline,data['userName']),
+                              _profileDetail(AppImage.userName,data['userName']),
                               const SizedBox(height: 10,),
-                              _profileDetail(Icons.email_outlined,data['userEmail']),
+                              _profileDetail(AppImage.email,data['userEmail']),
                               const SizedBox(height: 10,),
-                              _profileDetail(Icons.phone_android_outlined,data['userMobile']),
+                              _profileDetail(AppImage.mobile,data['userMobile']),
                               const SizedBox(height: 10,),
-                              _profileDetail(Icons.supervised_user_circle_sharp,data['chooseClass']),
+                              _profileDetail(AppImage.address,data['userAddress']),
+                              const SizedBox(height: 10,),
+                              _profileDetail(AppImage.classIcon,data['chooseClass']),
                               const SizedBox(height: 20,),
                             ],
                           ),
@@ -163,7 +167,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _profileDetail(IconData icon,String userDetails){
+  Widget _profileDetail(String icon,String userDetails){
     return Card(
       color: AppColor.appColor,
       child: Row(
@@ -171,12 +175,14 @@ class ProfileScreen extends StatelessWidget {
           Container(
               padding: const EdgeInsets.only(top: 15,bottom: 15),
               margin: const EdgeInsets.only(left: 10,right: 10),
-              child: Icon(icon,color: AppColor.whiteColor,)),
+              child: Image.asset(icon,color: AppColor.whiteColor,height: 20,width: 20,)),
           const SizedBox(height: 5,),
-          Container(
-              padding: const EdgeInsets.only(top: 10,bottom: 10),
-              margin: const EdgeInsets.only(left: 15,right: 15),
-              child: Text(userDetails,style: const TextStyle(fontSize: 12))),
+          Expanded(
+            child: Container(
+                padding: const EdgeInsets.only(top: 10,bottom: 10),
+                margin: const EdgeInsets.only(left: 15,right: 15),
+                child: Text(userDetails,style: const TextStyle(fontSize: 12,),maxLines: 2,overflow: TextOverflow.ellipsis,)),
+          ),
         ],
       ),
     );

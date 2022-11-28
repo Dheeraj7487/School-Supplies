@@ -3,7 +3,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 import '../login/provider/loading_provider.dart';
-import '../utils/app_color.dart';
 
 class LoadingWidget extends StatelessWidget {
   final Widget? child;

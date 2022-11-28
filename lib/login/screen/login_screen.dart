@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.only(top: 20.0,left: 20,right: 20),
               child: LoginScreenWidget()
             ) : SizedBox(
-                width: 300,
+                width: 600,
                 child: Container(
                     color: AppColor.appColor.withOpacity(0.5),
                     child: const LoginScreenWidget())

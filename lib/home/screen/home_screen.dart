@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:school_supplies_hub/utils/app_color.dart';
@@ -21,8 +20,8 @@ class _HomeScreenState extends State<HomeScreen>{
   String? userName = ' ';
 
   Future shopDetailsCheck() async{
-    var shopQuerySnapshot = await FirebaseCollection().userCollection.where('userEmail',
-        isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
+    var shopQuerySnapshot = await FirebaseCollection().userCollection
+        .where('userEmail', isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
     for(var snapShot in shopQuerySnapshot.docChanges){
       if(mounted){
         setState(() {
@@ -50,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen>{
               bottom: Radius.circular(40),
             ),
           ),
-          backgroundColor: AppColor.whiteColor.withOpacity(0.1),
+          backgroundColor: AppColor.greyColor.withOpacity(0.1),
           toolbarHeight: 80,
           title: Stack(
             children: [
@@ -169,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen>{
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
             child: Column(
-              children: const [
+              children:  const [
                 RecentlyAddedBookSliderWidget(),
                 SizedBox(height: 10),
                 LatestBookWidget(),
@@ -189,6 +188,8 @@ class _HomeScreenState extends State<HomeScreen>{
           },
           child: const Icon(Icons.add,color: AppColor.appColor), //icon inside button
         ),
+
+
       ),
     );
   }

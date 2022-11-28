@@ -58,49 +58,28 @@ class LatestBookWidget extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Stack(
-                                  children: [
-                                    ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child:
-                                        CachedNetworkImage(
-                                          imageUrl: "https://png.pngtree.com/element_our/20190530/ourlarge/pngtree-e-commerce-fluid-gradient-border-image_1250921.jpg",
-                                          height: 150,
-                                          placeholder: (context, url) => Shimmer.fromColors(
-                                            highlightColor: AppColor.appColor,
-                                            baseColor: Colors.grey.shade100,
-                                            period: const Duration(seconds: 2),
-                                            child: SizedBox(
-                                              height: MediaQuery.of(context).size.height/3,
-                                              width: MediaQuery.of(context).size.width,
-                                            ),
+                                Container(
+                                  margin: const EdgeInsets.fromLTRB(3,15,3,0),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: CachedNetworkImage(
+                                        imageUrl: "${snapshot.data?.docs[index]['bookImages'][0]}",
+                                        height: 120,width: double.infinity,fit: BoxFit.fill,
+                                        placeholder: (context, url) => Shimmer.fromColors(
+                                          highlightColor: AppColor.appColor,
+                                          baseColor: Colors.grey.shade100,
+                                          period: const Duration(seconds: 2),
+                                          child: const SizedBox(
+                                              height: 120,width: double.infinity
                                           ),
-                                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                                        )
-                                    ),
-                                    Container(
-                                      margin: const EdgeInsets.fromLTRB(3,15,3,0),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: CachedNetworkImage(
-                                          imageUrl: "${snapshot.data?.docs[index]['bookImages'][0]}",
-                                          height: 120,width: double.infinity,fit: BoxFit.fill,
-                                          placeholder: (context, url) => Shimmer.fromColors(
-                                            highlightColor: AppColor.appColor,
-                                            baseColor: Colors.grey.shade100,
-                                            period: const Duration(seconds: 2),
-                                            child: const SizedBox(
-                                                height: 120,width: double.infinity
-                                            ),
-                                          ),
-                                          errorWidget: (context, url, error) => Image.network("https://lh6.googleusercontent.com/Bu-pRqU_tWZV7O3rJ5nV1P6NjqFnnAs8kVLC5VGz_Kf7ws0nDUXoGTc7pP87tyUCfu8VyXi0YviIm7CxAISDr2lJSwWwXQxxz98qxVfMcKTJfLPqbcfhn-QEeOowjrlwX1LYDFJN",
-                                              height: 120,width: double.infinity,fit: BoxFit.fill,),
-                                        )
-                                      ),
-                                    ),
-                                  ],
+                                        ),
+                                        errorWidget: (context, url, error) => Image.network("https://lh6.googleusercontent.com/Bu-pRqU_tWZV7O3rJ5nV1P6NjqFnnAs8kVLC5VGz_Kf7ws0nDUXoGTc7pP87tyUCfu8VyXi0YviIm7CxAISDr2lJSwWwXQxxz98qxVfMcKTJfLPqbcfhn-QEeOowjrlwX1LYDFJN",
+                                          height: 120,width: double.infinity,fit: BoxFit.fill,),
+                                      )
+                                  ),
                                 ),
-                                Text('\$ ${snapshot.data?.docs[index]['bookPrice']}',
+                                const SizedBox(height: 5,),
+                                Text('₹ ${snapshot.data?.docs[index]['bookPrice']}',
                                     style: const TextStyle(color: AppColor.redColor,fontSize: 16),
                                     maxLines: 1,overflow: TextOverflow.ellipsis),
                               ],

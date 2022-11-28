@@ -8,6 +8,8 @@ class AddBookDetailModel {
   String? bookVideo;
   String? selectedClass;
   String? price;
+  int? bookAvailable;
+  int? discountPercentage;
   String? selectedCourse;
   String? selectedSemester;
   double? bookRating;
@@ -27,6 +29,8 @@ class AddBookDetailModel {
         this.bookImages,
         this.bookVideo,
         this.price,
+        this.bookAvailable,
+        this.discountPercentage,
         this.selectedClass,
         this.selectedCourse,
         this.selectedSemester,
@@ -42,6 +46,8 @@ class AddBookDetailModel {
     userMobile = json['userMobile'];
     bookName = json['bookName'];
     price = json['bookPrice'];
+    bookAvailable = json['bookAvailable'];
+    discountPercentage = json['discountPercentage'];
     authorName = json['authorName'];
     bookDescription = json['bookDescription'];
     bookImages = json['bookImages'];
@@ -64,6 +70,8 @@ class AddBookDetailModel {
     data['authorName'] = authorName;
     data['bookDescription'] = bookDescription;
     data['bookPrice'] = price;
+    data['bookAvailable'] = bookAvailable;
+    data['discountPercentage'] = discountPercentage;
     data['bookImages'] = bookImages;
     data['bookVideo'] = bookVideo;
     data['selectedClass'] = selectedClass;

@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:school_supplies_hub/Firebase/firebase_collection.dart';
 import '../../main.dart';
+import '../book_details/screen/book_details_screen.dart';
 
 class PushNotification extends ChangeNotifier{
   late String token;
@@ -41,7 +43,24 @@ class PushNotification extends ChangeNotifier{
       }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async{
+
+      var notificationData = await FirebaseCollection().addBookCollection.get();
+
+      debugPrint('Notification Data ${message.data.values.first}');
+      debugPrint('Notification Data ${message.data.values.last}');
+
+      for(var data in notificationData.docChanges){
+        if(data.doc.get('bookName') == message.data.values.last
+            && data.doc.get('currentUser') == message.data.values.first
+        ){
+          debugPrint('Book Price ${data.doc.get('bookName')}');
+          debugPrint('Book Description ${data.doc.get('bookDescription')}');
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>
+              BookDetailScreen(snapshotData: data.doc, bookImages: data.doc.get('bookImages'),)));
+        }
+      }
+
       // RemoteNotification? notification = message.notification;
       // AndroidNotification? android = message.notification?.android;
       // DarwinNotificationDetails? ios = message.notification?.apple as DarwinNotificationDetails?;
@@ -60,6 +79,10 @@ class PushNotification extends ChangeNotifier{
         "android_channel_id": "schoolsupplies-5cf3f",
         "sound": true,
       },
+      "data" : {
+        'bookName' : bookName,
+        'currentUser' : "${FirebaseAuth.instance.currentUser?.email}"
+      }
     });
 
     try {

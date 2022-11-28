@@ -38,6 +38,8 @@ class _AddBookDetailState extends State<AddBookDetail> {
   File? file;
   String bookVideoName ='';
   String bookImageName ='';
+  bool checkBoxValue = false;
+  int counterValue = 0,bookAdded = 1;
 
   final ImagePicker imagePicker = ImagePicker();
   List<XFile>? imageFileList = [];
@@ -56,14 +58,9 @@ class _AddBookDetailState extends State<AddBookDetail> {
   }
 
   void selectBookVideo() async{
-    // FilePickerResult? result = await FilePicker.platform.pickFiles(
-    //     allowMultiple: true,
-    //     type: FileType.video
-    // );
     final XFile? image = await imagePicker.pickVideo(source: ImageSource.gallery);
     if(image == null) return;
     final filePath = image.path;
-    //File compressImage = await snapshot.imageSizeCompress(image: File(filePath!));
     setState(() {
       file = File(filePath);
       selectBookVideoName = image.name;
@@ -79,7 +76,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
     //where('userEmail',isNotEqualTo: FirebaseAuth.instance.currentUser?.email).
     where('chooseClass',isEqualTo: Provider.of<AddBookDetailProvider>(context,listen:false).selectClass.toString()).get();
 
-    //if (file == null) return;
     final bookVideoDestination = 'Book Video/$selectBookVideoName';
 
     try {
@@ -88,16 +84,13 @@ class _AddBookDetailState extends State<AddBookDetail> {
       final snapshot2 = await bookVideoUploadTask.whenComplete(() {});
 
       imageFileList?.forEach((image) async{
-       // File file1 = image as File;
         final bookImageDestination = 'Book Image/${image.name}';
         final bookImageRef = FirebaseStorage.instance.ref().child(bookImageDestination);
         UploadTask bookImageUploadTask =  bookImageRef.putFile(File(image.path));
         final snapshot1 = await bookImageUploadTask.whenComplete(() {});
         imagesUrls.add(await snapshot1.ref.getDownloadURL().whenComplete((){}));
 
-        final bookVideoUrl = await snapshot2.ref.getDownloadURL().whenComplete(() {
-          // Provider.of<LoadingProvider>(context,listen: false).startLoading();
-        });
+        final bookVideoUrl = await snapshot2.ref.getDownloadURL().whenComplete(() {});
         setState(() {});
         debugPrint('Image Url => ${imagesUrls.length} || ${imageFileList!.length}');
         if(imagesUrls.length == imageFileList!.length){
@@ -110,6 +103,8 @@ class _AddBookDetailState extends State<AddBookDetail> {
               authorName: authorController.text,
               bookDescription: bookDescriptionController.text,
               price: priceController.text,
+              discountPercentage : counterValue,
+              bookAvailable: bookAdded,
               bookImages: imagesUrls,
               bookVideo: bookVideoUrl, selectedClass: Provider.of<AddBookDetailProvider>(context,listen:false).selectClass.toString(),
               selectedCourse: Provider.of<AddBookDetailProvider>(context,listen:false).selectCourse.toString(),
@@ -119,7 +114,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
           ).then((value) {
             debugPrint('Successfully Added');
             Provider.of<LoadingProvider>(context,listen: false).stopLoading();
-
 
             for(var data in snapshotData.docChanges){
               if(data.doc.get('userEmail') != FirebaseAuth.instance.currentUser?.email){
@@ -133,8 +127,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
           });
         }
       });
-
-
     } catch (e) {
       debugPrint('Failed to upload image');
       debugPrint('$e');
@@ -336,6 +328,43 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                 },
                                 items:  snapshot.selectClasses
                             ),
+                            const SizedBox(height: 5),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Expanded(
+                                    child: Text('How many book are add')),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: (){
+                                        setState(() {
+                                          bookAdded++;
+                                        });
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.fromLTRB(15,10,15,10),
+                                        child: Icon(Icons.add,color: AppColor.whiteColor,),
+                                      ),
+                                    ),
+                                    Text("$bookAdded"),
+                                    GestureDetector(
+                                      onTap: (){
+                                        if(bookAdded !=1){
+                                          setState(() {
+                                            bookAdded--;
+                                          });
+                                        }
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.fromLTRB(15,10,15,10),
+                                        child: Icon(Icons.remove,color: AppColor.whiteColor,),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                             Visibility(
                               visible: snapshot.selectClass == 'First Year'
                                   || snapshot.selectClass == 'Second Year'
@@ -343,16 +372,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
                               child: Column(
                                 children: [
                                   const SizedBox(height: 20),
-                                  /*appDropDown(
-                                      value: snapshot.selectSemester,
-                                      hint: 'Select Semester',
-                                      onChanged: (String? newValue) {
-                                        snapshot.selectSemester = newValue;
-                                        snapshot.getSemester;
-                                      },
-                                      items:  snapshot.selectSemesters
-                                  ),*/
-
                                   DropdownButtonHideUnderline(
                                     child: DropdownButton2(
                                       iconDisabledColor: Colors.grey,
@@ -403,8 +422,72 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                 ],
                               ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Expanded(
+                                    child: Text('If you provide the discount please click the check the checkbox')),
+                                Theme(
+                                  data: Theme.of(context).copyWith(
+                                    unselectedWidgetColor: AppColor.greyColor,
+                                  ),
+                                  child: Checkbox(
+                                    checkColor: AppColor.whiteColor,
+                                    activeColor: AppColor.greyColor,
+                                    value: checkBoxValue,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        checkBoxValue = value!;
+                                        if(checkBoxValue == false){
+                                          counterValue = 0;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            Visibility(
+                              visible: checkBoxValue,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Expanded(
+                                      child: Text('Discount Percentage')),
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: (){
+                                          setState(() {
+                                            counterValue++;
+                                          });
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.fromLTRB(15,10,15,10),
+                                          child: Icon(Icons.add,color: AppColor.whiteColor,),
+                                        ),
+                                      ),
+                                      Text("$counterValue%"),
+                                      GestureDetector(
+                                        onTap: (){
+                                          if(counterValue !=0){
+                                            setState(() {
+                                              counterValue--;
+                                            });
+                                          }
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.fromLTRB(15,10,15,10),
+                                          child: Icon(Icons.remove,color: AppColor.whiteColor,),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
                             const SizedBox(height: 20),
-
                             ElevatedButton(
                               onPressed: () {
                                 selectImages();

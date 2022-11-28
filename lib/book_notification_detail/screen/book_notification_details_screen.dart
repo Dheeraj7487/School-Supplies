@@ -57,7 +57,7 @@ class _BookNotificationDetailScreenState extends State<BookNotificationDetailScr
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context,index){
                   return Padding(
-                    padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                    padding: const EdgeInsets.fromLTRB(10,20,10,10),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

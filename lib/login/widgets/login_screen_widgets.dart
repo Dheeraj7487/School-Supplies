@@ -146,6 +146,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                         userName: data.doc.get('userName'),
                         userEmail: data.doc.get('userEmail'),
                         userMobile: data.doc.get('userMobile'),
+                        userAddress: data.doc.get('userAddress'),
                         chooseClass: data.doc.get('chooseClass'),
                         fcmToken: fcmToken.toString(),
                         rating: data.doc.get('userRating'),
