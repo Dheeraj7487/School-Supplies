@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/add_details/provider/add_book_detail_provider.dart';
+import 'package:school_supplies_hub/home/provider/internet_provider.dart';
 import 'package:school_supplies_hub/utils/app_color.dart';
 import 'package:school_supplies_hub/widgets/loading_widget.dart';
 import 'login/provider/loading_provider.dart';
@@ -53,6 +54,7 @@ void main() async{
           providers: [
             ChangeNotifierProvider<LoadingProvider>(create: (_) => LoadingProvider()),
             ChangeNotifierProvider<AddBookDetailProvider>(create: (_) => AddBookDetailProvider()),
+            ChangeNotifierProvider<InternetProvider>(create: (_) => InternetProvider()),
           ], child: const MyApp())
    );
 }

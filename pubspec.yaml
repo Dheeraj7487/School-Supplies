@@ -62,7 +62,9 @@ dependencies:
   flutter_spinkit: ^5.1.0
   http: ^0.13.5
   cached_network_image: ^3.2.2
-#  google_mobile_ads: ^2.3.0
+  connectivity_plus: ^3.0.2
+  #  google_mobile_ads: ^2.3.0
+
 
   flutter:
     sdk: flutter

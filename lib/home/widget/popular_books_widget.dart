@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../Firebase/firebase_collection.dart';
 import '../../book_details/screen/book_details_screen.dart';
+import '../../shimmers/horizontal_shimmers.dart';
 import '../../utils/app_color.dart';
 import '../screen/popular_books_screen.dart';
 
@@ -49,7 +50,7 @@ class PopularBookWidget extends StatelessWidget {
           stream: FirebaseCollection().addBookCollection.snapshots(),
           builder: (context,AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
             if(snapshot.hasError){
-              return const Center(child: SizedBox());
+              return Center(child: HorizontalShimmers(height: 150,width: 220,));
             }
             else if(snapshot.hasData){
               return SizedBox(
@@ -104,7 +105,7 @@ class PopularBookWidget extends StatelessWidget {
                                               padding: const EdgeInsets.only(left: 5,right: 10,top: 1,bottom: 1),
                                               decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(7),
-                                                  color: AppColor.darkWhiteColor
+                                                  color: AppColor.greyColor.withOpacity(0.7)
                                               ),
                                               child: Row(
                                                 children: [
@@ -142,7 +143,7 @@ class PopularBookWidget extends StatelessWidget {
                 ),
               );
             } else {
-              return const Center(child: SizedBox());
+              return Center(child: HorizontalShimmers(height: 150,width: 220,));
             }
           }
         )

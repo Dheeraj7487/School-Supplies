@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/add_details/auth/add_book_details_auth.dart';
 import '../../Firebase/firebase_collection.dart';
+import '../../home/provider/internet_provider.dart';
 import '../../utils/app_color.dart';
 import '../../utils/app_utils.dart';
 import '../../widgets/textfield_widget.dart';
@@ -27,23 +29,146 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
   List ratingList = [];
   var bookImages = [];
 
-  late String authorName,
-      bookName,
-      bookDescription,
-      bookVideo,
-      bookPrice,
-      currentUser,
-      selectedClass,
-      selectedCourse,
-      selectedSemester,
-      publisherName,
-      timeStamp,
-      userId,
-      userEmail,
-      userMobile,
-      timestamp;
+  late String authorName, bookName, bookDescription,
+      bookVideo, bookPrice, currentUser,
+      selectedClass, selectedCourse, selectedSemester,
+      publisherName, timeStamp, userId,
+      userEmail, userMobile, timestamp;
 
   late int discountPercentage, bookAvailable;
+
+  giveRating() async{
+    ratingList.clear();
+    var querySnapShot = await FirebaseCollection().userCollection
+        .where('userEmail', isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
+
+    var queryUserRatingSnapshots = await FirebaseCollection().userRatingCollection
+        .where('bookName', isEqualTo: widget.snapshotData['bookName']).get();
+
+    var queryBookSnapshots = await FirebaseCollection().addBookCollection
+        .where('bookName', isEqualTo: widget.snapshotData['bookName']).get();
+
+    for (var snapshot in querySnapShot.docChanges) {
+      RatingAuth().userRating(
+        bookName: widget.snapshotData['bookName'],
+        currentUser: FirebaseAuth.instance.currentUser!.email.toString(),
+        userRating: userRating,
+        userGiveExprience: reviewController.text,
+        timestamp: Timestamp.now(),
+        userName: snapshot.doc.get('userName'),
+      ).then((value) {
+        AppUtils.instance.showSnackBar(context, 'Your review will be post');
+
+        if (queryUserRatingSnapshots.docChanges.isEmpty) {
+          ratingList.add(userRating);
+          sum = ratingList.reduce((a, b) => a + b);
+          userLength = ratingList.length;
+          rating = sum / userLength;
+          debugPrint('Inside Empty User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+        }
+        for (var snapshot1 in queryUserRatingSnapshots.docChanges) {
+          for (int i=0; i < 1; i++) {
+            if (snapshot1.doc.get('currentUser') == FirebaseAuth.instance.currentUser?.email) {
+              ratingList.add(userRating);
+              sum = ratingList.reduce((a, b) => a + b);
+              userLength = queryUserRatingSnapshots.docs.length;
+              rating = sum / userLength;
+              debugPrint('Inside One and Fetch User  || User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+              break;
+            }
+
+            /*else {
+                                ratingList.add(userRating);
+                                sum = ratingList.reduce((a, b) => a + b);
+                                userLength = queryUserRatingSnapshots.docs.length;
+                                rating = sum / userLength;
+                                debugPrint('Else If User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+                                print('i val $i');
+                                break;
+                              }*/
+
+            /* else if(queryUserRatingSnapshots.docs.length == userLength){
+                                ratingList.add(userRating);
+                                sum = ratingList.reduce((a, b) => a + b);
+                                userLength = queryUserRatingSnapshots.docs.length;
+                                rating = sum / userLength;
+                                debugPrint('Else If User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+                              }*/
+
+            else {
+              ratingList.add(snapshot1.doc.get('bookRating'));
+              sum = ratingList.reduce((a, b) => a + b);
+              userLength = queryUserRatingSnapshots.docs.length;
+              rating = sum / userLength;
+              debugPrint('Else User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+              break;
+              /*if (snapshot1.doc.get('currentUser') == FirebaseAuth.instance.currentUser?.email) {
+                                  //   userRating = snapshot1.doc.get('bookRating');
+                                  ratingList.add(userRating);
+                                  sum = ratingList.reduce((a, b) => a + b);
+                                  userLength = queryUserRatingSnapshots.docs.length;
+                                  rating = sum / userLength;
+                                  debugPrint('Else (If) User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+                                  break;
+                                }
+                                else {
+                                  //userRating = snapshot1.doc.get('bookRating');
+                                  ratingList.add(snapshot1.doc.get('bookRating'));
+                                  sum = ratingList.reduce((a, b) => a + b);
+                                  userLength = queryUserRatingSnapshots.docs.length;
+                                  rating = sum / userLength;
+                                  debugPrint('Else User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+                                }*/
+            }
+          }
+        }
+
+        for (var bookSnapshot in queryBookSnapshots.docChanges) {
+          authorName = bookSnapshot.doc.get('authorName');
+          bookDescription = bookSnapshot.doc.get('bookDescription');
+          bookImages = bookSnapshot.doc.get('bookImages');
+          bookName = bookSnapshot.doc.get('bookName');
+          bookVideo = bookSnapshot.doc.get('bookVideo');
+          currentUser = bookSnapshot.doc.get('currentUser');
+          bookPrice = bookSnapshot.doc.get('bookPrice');
+          selectedSemester =
+              bookSnapshot.doc.get('selectedSemester');
+          publisherName = bookSnapshot.doc.get('publisherName');
+          selectedCourse = bookSnapshot.doc.get('selectedCourse');
+          selectedClass = bookSnapshot.doc.get('selectedClass');
+          userId = bookSnapshot.doc.get('userId');
+          userEmail = bookSnapshot.doc.get('userEmail');
+          timestamp = bookSnapshot.doc.get('timeStamp');
+          userMobile = bookSnapshot.doc.get('userMobile');
+          discountPercentage =
+              bookSnapshot.doc.get('discountPercentage');
+          bookAvailable = bookSnapshot.doc.get('bookAvailable');
+        }
+
+        AddBookDetailsAuth().addBookDetails(
+            uId: userId,
+            publisherName: publisherName,
+            userEmail: userEmail,
+            userMobile: userMobile,
+            bookName: bookName,
+            price: bookPrice,
+            bookImages: bookImages,
+            bookVideo: bookVideo,
+            discountPercentage: discountPercentage,
+            bookAvailable: bookAvailable,
+            selectedClass: selectedClass,
+            selectedCourse: selectedCourse,
+            selectedSemester: selectedSemester,
+            bookRating: rating,
+            currentUser: currentUser,
+            authorName: authorName,
+            bookDescription: bookDescription,
+            timestamp: timestamp);
+        Navigator.pop(context);
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,153 +179,19 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
         actions: [
           Visibility(
             visible: buttonVisible,
-            child: TextButton(
-                onPressed: () async {
-                  ratingList.clear();
-                  var querySnapShot = await FirebaseCollection()
-                      .userCollection
-                      .where('userEmail',
-                          isEqualTo: FirebaseAuth.instance.currentUser?.email)
-                      .get();
-
-                  var queryUserRatingSnapshots = await FirebaseCollection()
-                      .userRatingCollection
-                      .where('bookName',
-                          isEqualTo: widget.snapshotData['bookName'])
-                      .get();
-
-                  var queryBookSnapshots = await FirebaseCollection()
-                      .addBookCollection
-                      .where('bookName',
-                          isEqualTo: widget.snapshotData['bookName'])
-                      .get();
-
-                  for (var snapshot in querySnapShot.docChanges) {
-                    RatingAuth()
-                        .userRating(
-                      bookName: widget.snapshotData['bookName'],
-                      currentUser:
-                          FirebaseAuth.instance.currentUser!.email.toString(),
-                      userRating: userRating,
-                      userGiveExprience: reviewController.text,
-                      timestamp: Timestamp.now(),
-                      userName: snapshot.doc.get('userName'),
-                    ).then((value) {
-                      AppUtils.instance.showSnackBar(context, 'Your review will be post');
-
-                      if (queryUserRatingSnapshots.docChanges.isEmpty) {
-                        ratingList.add(userRating);
-                        sum = ratingList.reduce((a, b) => a + b);
-                        userLength = ratingList.length;
-                        rating = sum / userLength;
-                        debugPrint('Inside Empty User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
+            child: Consumer<InternetProvider>(
+                builder: (context, internetSnapshot, _) {
+                return TextButton(
+                    onPressed: () async {
+                      if(internetSnapshot.isInternet){
+                        giveRating();
+                      }else{
+                        AppUtils.instance.showSnackBar(context, 'Please check your internet connection');
                       }
-                      for (var snapshot1 in queryUserRatingSnapshots.docChanges) {
-                        for (int i=0; i < 1; i++) {
-                          if (snapshot1.doc.get('currentUser') == FirebaseAuth.instance.currentUser?.email) {
-                            ratingList.add(userRating);
-                            sum = ratingList.reduce((a, b) => a + b);
-                            userLength = queryUserRatingSnapshots.docs.length;
-                            rating = sum / userLength;
-                            debugPrint('Inside One and Fetch User  || User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
-                            break;
-                          }
-
-                          /*else {
-                            ratingList.add(userRating);
-                            sum = ratingList.reduce((a, b) => a + b);
-                            userLength = queryUserRatingSnapshots.docs.length;
-                            rating = sum / userLength;
-                            debugPrint('Else If User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
-                            print('i val $i');
-                            break;
-                          }*/
-
-                         /* else if(queryUserRatingSnapshots.docs.length == userLength){
-                            ratingList.add(userRating);
-                            sum = ratingList.reduce((a, b) => a + b);
-                            userLength = queryUserRatingSnapshots.docs.length;
-                            rating = sum / userLength;
-                            debugPrint('Else If User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
-                          }*/
-
-                          else {
-                            ratingList.add(snapshot1.doc.get('bookRating'));
-                            sum = ratingList.reduce((a, b) => a + b);
-                            userLength = queryUserRatingSnapshots.docs.length;
-                            rating = sum / userLength;
-                            debugPrint('Else User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
-                            break;
-                            /*if (snapshot1.doc.get('currentUser') == FirebaseAuth.instance.currentUser?.email) {
-                              //   userRating = snapshot1.doc.get('bookRating');
-                              ratingList.add(userRating);
-                              sum = ratingList.reduce((a, b) => a + b);
-                              userLength = queryUserRatingSnapshots.docs.length;
-                              rating = sum / userLength;
-                              debugPrint('Else (If) User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
-                              break;
-                            }
-                            else {
-                              //userRating = snapshot1.doc.get('bookRating');
-                              ratingList.add(snapshot1.doc.get('bookRating'));
-                              sum = ratingList.reduce((a, b) => a + b);
-                              userLength = queryUserRatingSnapshots.docs.length;
-                              rating = sum / userLength;
-                              debugPrint('Else User Rating => $ratingList === $sum = $userLength = $rating = $userRating');
-                            }*/
-                          }
-                        }
-                      }
-
-                      for (var bookSnapshot in queryBookSnapshots.docChanges) {
-                        authorName = bookSnapshot.doc.get('authorName');
-                        bookDescription = bookSnapshot.doc.get('bookDescription');
-                        bookImages = bookSnapshot.doc.get('bookImages');
-                        bookName = bookSnapshot.doc.get('bookName');
-                        bookVideo = bookSnapshot.doc.get('bookVideo');
-                        currentUser = bookSnapshot.doc.get('currentUser');
-                        bookPrice = bookSnapshot.doc.get('bookPrice');
-                        selectedSemester =
-                            bookSnapshot.doc.get('selectedSemester');
-                        publisherName = bookSnapshot.doc.get('publisherName');
-                        selectedCourse = bookSnapshot.doc.get('selectedCourse');
-                        selectedClass = bookSnapshot.doc.get('selectedClass');
-                        userId = bookSnapshot.doc.get('userId');
-                        userEmail = bookSnapshot.doc.get('userEmail');
-                        timestamp = bookSnapshot.doc.get('timeStamp');
-                        userMobile = bookSnapshot.doc.get('userMobile');
-                        discountPercentage =
-                            bookSnapshot.doc.get('discountPercentage');
-                        bookAvailable = bookSnapshot.doc.get('bookAvailable');
-                      }
-
-                      AddBookDetailsAuth().addBookDetails(
-                          uId: userId,
-                          publisherName: publisherName,
-                          userEmail: userEmail,
-                          userMobile: userMobile,
-                          bookName: bookName,
-                          price: bookPrice,
-                          bookImages: bookImages,
-                          bookVideo: bookVideo,
-                          discountPercentage: discountPercentage,
-                          bookAvailable: bookAvailable,
-                          selectedClass: selectedClass,
-                          selectedCourse: selectedCourse,
-                          selectedSemester: selectedSemester,
-                          bookRating: rating,
-                          currentUser: currentUser,
-                          authorName: authorName,
-                          bookDescription: bookDescription,
-                          timestamp: timestamp);
-                      Navigator.pop(context);
-                    });
-                  }
-                },
-                child: Text(
-                  'POST',
-                  style: Theme.of(context).textTheme.subtitle2,
-                )),
+                    },
+                    child: Text('POST', style: Theme.of(context).textTheme.subtitle2,));
+              }
+            ),
           )
         ],
       ),

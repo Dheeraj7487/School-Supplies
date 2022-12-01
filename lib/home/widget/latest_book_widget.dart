@@ -36,7 +36,7 @@ class LatestBookWidget extends StatelessWidget {
             stream: FirebaseCollection().addBookCollection.snapshots(),
             builder: (context,AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
               if(snapshot.hasError){
-                return Center(child: HorizontalShimmers(height: 175,));
+                return Center(child: HorizontalShimmers(height: 175,width: 150,));
               } else if(snapshot.hasData){
                 return SizedBox(
                   height: 175,
@@ -90,7 +90,7 @@ class LatestBookWidget extends StatelessWidget {
                   ),
                 );
               } else {
-                return Center(child: HorizontalShimmers(height: 160,));
+                return Center(child: HorizontalShimmers(height: 175,width: 150));
               }
             }
         )

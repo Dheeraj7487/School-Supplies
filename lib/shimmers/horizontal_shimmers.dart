@@ -3,8 +3,8 @@ import 'package:school_supplies_hub/utils/app_color.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HorizontalShimmers extends StatelessWidget {
-  double height;
-  HorizontalShimmers({Key? key,required this.height}) : super(key: key);
+  double height,width;
+  HorizontalShimmers({Key? key,required this.height,required this.width}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class HorizontalShimmers extends StatelessWidget {
             itemBuilder: (context, index) {
               return Container(
                 margin: const EdgeInsets.only(left: 10),
-                width: 150,
+                width: width,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(20),bottomRight: Radius.circular(30)),
                 ),
