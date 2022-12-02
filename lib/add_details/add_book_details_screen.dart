@@ -37,7 +37,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
   TextEditingController bookNameController = TextEditingController();
   TextEditingController toolNameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
-  TextEditingController bookDescriptionController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   TextEditingController authorController = TextEditingController();
   String selectBookVideoName = '';
   File? videoFile;
@@ -110,7 +110,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
               userMobile: phoneController.text,
               bookName: bookNameController.text,
               authorName: authorController.text,
-              bookDescription: bookDescriptionController.text,
+              bookDescription: descriptionController.text,
               price: priceController.text,
               discountPercentage : counterValue,
               bookAvailable: bookAdded,
@@ -127,7 +127,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
             for(var data in snapshotData.docChanges){
               if(data.doc.get('userEmail') != FirebaseAuth.instance.currentUser?.email){
                 PushNotification().sendPushNotification(data.doc.get('fcmToken'),
-                    bookNameController.text,bookDescriptionController.text);
+                    bookNameController.text,descriptionController.text);
               }
             }
             Navigator.pushAndRemoveUntil(
@@ -146,7 +146,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
     Provider.of<LoadingProvider>(context,listen: false).startLoading();
 
     try {
-      final bookImageDestination = 'Geometry Image/${geometryImageName}';
+      final bookImageDestination = 'Geometry Image/$geometryImageName';
       final bookImageRef = FirebaseStorage.instance.ref().child(bookImageDestination);
       UploadTask bookImageUploadTask =  bookImageRef.putFile(File(imagePath!));
       final snapshot = await bookImageUploadTask.whenComplete(() {});
@@ -159,6 +159,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
           userEmail: emailController.text,
           userMobile: phoneController.text,
           price: priceController.text,
+          toolDescription: descriptionController.text,
           discountPercentage: counterValue,
           toolAvailable: bookAdded,
           toolName: toolNameController.text,
@@ -396,6 +397,24 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                 },
                               ),
 
+                              const SizedBox(height: 20),
+                              const Text('Description'),
+                              const SizedBox(height: 5),
+                              TextFieldWidget().textFieldWidget(
+                                controller: descriptionController,
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.text,
+                                hintText: "Enter Description",
+                                maxLines: 4,
+                                prefixIcon: const Icon(Icons.description_outlined,color: AppColor.whiteColor),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty || value.trim().isEmpty) {
+                                    return 'Please enter description';
+                                  }
+                                  return null;
+                                },
+                              ),
+
                               Visibility(
                                 visible: !geometryBoxValue,
                                 child: Column(
@@ -413,23 +432,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                       validator: (value) {
                                         if (value == null || value.isEmpty || value.trim().isEmpty) {
                                           return 'Please enter name';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(height: 20),
-                                    const Text('Description'),
-                                    const SizedBox(height: 5),
-                                    TextFieldWidget().textFieldWidget(
-                                      controller: bookDescriptionController,
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType: TextInputType.text,
-                                      hintText: "Enter Book Description",
-                                      maxLines: 4,
-                                      prefixIcon: const Icon(Icons.description_outlined,color: AppColor.whiteColor),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty || value.trim().isEmpty) {
-                                          return 'Please enter book description';
                                         }
                                         return null;
                                       },

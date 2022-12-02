@@ -5,6 +5,7 @@ class AddGeometryBoxDetailModel {
   String? userMobile;
   String? toolName;
   String? toolImages;
+  String? description;
   String? toolPrice;
   int? toolAvailable;
   int? discountPercentage;
@@ -18,6 +19,7 @@ class AddGeometryBoxDetailModel {
         this.userEmail,
         this.userMobile,
         this.toolName,
+        this.description,
         this.toolImages,
         this.toolPrice,
         this.toolAvailable,
@@ -33,6 +35,7 @@ class AddGeometryBoxDetailModel {
     userEmail = json['userEmail'];
     userMobile = json['userMobile'];
     toolName = json['toolName'];
+    description = json['toolDescription'];
     toolPrice = json['price'];
     toolAvailable = json['toolAvailable'];
     discountPercentage = json['discountPercentage'];
@@ -49,6 +52,7 @@ class AddGeometryBoxDetailModel {
     data['userEmail'] = userEmail;
     data['userMobile'] = userMobile;
     data['toolName'] = toolName;
+    data['toolDescription'] = description;
     data['price'] = toolPrice;
     data['toolAvailable'] = toolAvailable;
     data['discountPercentage'] = discountPercentage;

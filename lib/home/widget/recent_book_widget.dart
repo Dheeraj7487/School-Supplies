@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:school_supplies_hub/Firebase/firebase_collection.dart';
+import 'package:school_supplies_hub/home/screen/popular_books_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../book_details/screen/book_details_screen.dart';
 import '../../shimmers/gridview_shimmers.dart';
@@ -129,17 +130,22 @@ class RecentBookWidget extends StatelessWidget {
                 ),
                 Visibility(
                   visible: snapshot.data!.docs.length >= 4,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 5,right: 5,top: 5),
-                    child: Card(
-                      color: AppColor.appColor.withOpacity(0.7),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: Center(child: Text('View All')),
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const PopularBooksScreen()));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5,right: 5,top: 5),
+                      child: Card(
+                        color: AppColor.appColor.withOpacity(0.7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: Center(child: Text('View All')),
+                        ),
                       ),
                     ),
                   ),

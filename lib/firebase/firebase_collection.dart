@@ -5,10 +5,12 @@ class FirebaseCollection {
   static const String addBookCollectionName = 'book_details';
   static const String addGeometryCollectionName = 'tool_details';
   static const String userRatingCollectionName = 'rating';
-  static const String buyBookCollectionName = 'buy_book';
+  static const String buyBookCollectionName = 'buy_details';
+  static const String favoriteCollectionName = 'favorite';
   CollectionReference userCollection = FirebaseFirestore.instance.collection(userCollectionName);
   CollectionReference addBookCollection = FirebaseFirestore.instance.collection(addBookCollectionName);
   CollectionReference addGeometryCollection = FirebaseFirestore.instance.collection(addGeometryCollectionName);
   CollectionReference userRatingCollection = FirebaseFirestore.instance.collection(userRatingCollectionName);
   CollectionReference buyBookCollection = FirebaseFirestore.instance.collection(buyBookCollectionName);
+  CollectionReference favoriteCollection = FirebaseFirestore.instance.collection(favoriteCollectionName);
 }

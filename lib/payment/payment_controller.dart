@@ -12,13 +12,18 @@ class PaymentController{
   Map<String, dynamic>? paymentIntentData;
 
   Future<void> makePayment(
-      {required String amount, required String currency,
-        required String publisherName,required String userEmail,required String userId,
-        required String userMobile,required String bookName,
+      {required String amount,
+        required String currency,
+        required String publisherName,
+        required String userEmail,
+        required String userId,
+        required String userMobile,
+        required String bookName,
         required List bookImage,
         required String bookVideo,
         required String selectedClass,
-        required String selectedCourse,required String selectedSemester,
+        required String selectedCourse,
+        required String selectedSemester,
         required String userAddress,
         required int discountPercentage,
         required String bookPrice,
@@ -64,7 +69,6 @@ class PaymentController{
               userAddress: userAddress, authorName: authorName,
               timestamp: timeStamp, bookAvailable: bookAvailable);
 
-
           AddBookDetailsAuth().addBookDetails(
             uId: userId,
             publisherName: publisherName,
@@ -84,7 +88,6 @@ class PaymentController{
             bookDescription: bookDescription,
             bookAvailable:  bookAvailable,
           );
-
 
           //debugPrint('Payment Success');
         } on Exception catch (e) {
@@ -121,9 +124,11 @@ class PaymentController{
             'Authorization': 'Bearer sk_test_51LiBiMSA1JiaZapda3BdjLgQiJlVTmxCj41Z6sgVAuYSrPMJjAokXSwGCkx9pUMOmxX30qGJzpTJtwJ0eybzt6tf007poFpurd',
             'Content-Type': 'application/x-www-form-urlencoded'
           });
-      debugPrint("${response.statusCode}");
-      debugPrint(jsonDecode(response.body));
+
+      debugPrint("Response Code${response.statusCode}");
+      debugPrint(response.body);
       return jsonDecode(response.body);
+
     } catch (err) {
       debugPrint('err charging user: ${err.toString()}');
     }

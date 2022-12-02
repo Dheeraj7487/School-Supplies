@@ -32,11 +32,12 @@ class MyOrderScreen extends StatelessWidget {
                 return  const Center(child: Text("No Orders"));
               } else if (snapshot.requireData.docChanges.isEmpty){
                 return  const Center(child: Text("No Orders"));
-              } else if(snapshot.hasData){
+              } else if(snapshot.hasData ){
                 return ListView.builder(
                     itemCount: snapshot.data?.docs.length,
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
+
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(10.0,5,10,5),
                         child: Card(
@@ -54,7 +55,10 @@ class MyOrderScreen extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     ClipRRect(
-                                      child: Image.network(snapshot.data?.docs[index]['bookImages'][0],
+                                      child: Image.network(
+                                          snapshot.data?.docs[index]['images'].runtimeType == String ?
+                                     snapshot.data?.docs[index]['images'] :
+                                      snapshot.data?.docs[index]['images'][0],
                                           height: 70,width: 90,fit: BoxFit.fill),
                                     ),
                                     Expanded(
@@ -67,7 +71,7 @@ class MyOrderScreen extends StatelessWidget {
                                             Text('Buy on  ${DateFormat('MMM dd').format(DateTime.parse(snapshot.data?.docs[index]['timeStamp']))}',
                                                 maxLines: 2,overflow: TextOverflow.ellipsis),
                                             const SizedBox(height: 2),
-                                            Text(snapshot.data?.docs[index]['bookName'],
+                                            Text(snapshot.data?.docs[index]['name'],
                                                 style: Theme.of(context).textTheme.headline4,
                                                 maxLines: 1,overflow: TextOverflow.ellipsis),
                                             const SizedBox(height: 2),
@@ -80,42 +84,47 @@ class MyOrderScreen extends StatelessWidget {
                                   ],
                                 ),
                                 const Divider(height: 10,color: AppColor.greyColor,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Book Details : ',style: Theme.of(context).textTheme.headline4,),
-                                        const SizedBox(width: 20,),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Text('Course Name',style: Theme.of(context).textTheme.subtitle1,),
-                                            const SizedBox(height: 5),
-                                            Text('Class Name',style:Theme.of(context).textTheme.subtitle1,),
-                                            const SizedBox(height: 5),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                Visibility(
+                                  visible: snapshot.data!.docs[index]['images'].runtimeType != String,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Book Details : ',style: Theme.of(context).textTheme.headline4,),
+                                          const SizedBox(width: 20,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Text('Course Name',style: Theme.of(context).textTheme.subtitle1,),
+                                              const SizedBox(height: 5),
+                                              Text('Class Name',style:Theme.of(context).textTheme.subtitle1,),
+                                              const SizedBox(height: 5),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
 
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(snapshot.data?.docs[index]['selectedCourse'],style: const TextStyle(fontSize: 12)),
-                                        const SizedBox(height: 5),
-                                        Text(snapshot.data?.docs[index]['selectedClass'],style: const TextStyle(fontSize: 12)),
-                                        const SizedBox(height: 5),
-                                      ],
-                                    )
-                                  ],
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(snapshot.data?.docs[index]['selectedCourse'],style: const TextStyle(fontSize: 12)),
+                                          const SizedBox(height: 5),
+                                          Text(snapshot.data?.docs[index]['selectedClass'],style: const TextStyle(fontSize: 12)),
+                                          const SizedBox(height: 5),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                const Divider(height: 10,color: AppColor.whiteColor,),
+                                Visibility(
+                                    visible: snapshot.data!.docs[index]['images'].runtimeType != String,
+                                    child: const Divider(height: 10,color: AppColor.whiteColor,)),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +142,7 @@ class MyOrderScreen extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        Text('₹ ${snapshot.data?.docs[index]['bookPrice']}',style: const TextStyle(fontSize: 12)),
+                                        Text('₹ ${snapshot.data?.docs[index]['price']}',style: const TextStyle(fontSize: 12)),
                                         const SizedBox(height: 5),
                                         Text('${snapshot.data?.docs[index]['discountPercentage']}.0%',style: const TextStyle(fontSize: 12)),
                                         const SizedBox(height: 3),
@@ -148,8 +157,8 @@ class MyOrderScreen extends StatelessWidget {
                                   children: [
                                     const Text('Total',
                                       style: TextStyle(color: AppColor.redColor,fontWeight: FontWeight.w500)),
-                                    Text('₹ ${double.parse(snapshot.data?.docs[index]['bookPrice']) -
-                                        double.parse(snapshot.data?.docs[index]['bookPrice'])*snapshot.data?.docs[index]['discountPercentage']/100}',
+                                    Text('₹ ${double.parse(snapshot.data?.docs[index]['price']) -
+                                        double.parse(snapshot.data?.docs[index]['price'])*snapshot.data?.docs[index]['discountPercentage']/100}',
                                       style: Theme.of(context).textTheme.headline3),
                                   ],
                                 ),
@@ -160,7 +169,7 @@ class MyOrderScreen extends StatelessWidget {
                                     Text('You Save :',
                                       style: Theme.of(context).textTheme.subtitle1),
                                     const SizedBox(width: 10,),
-                                    Text('₹ ${double.parse(snapshot.data?.docs[index]['bookPrice'])*snapshot.data?.docs[index]['discountPercentage']/100}',
+                                    Text('₹ ${double.parse(snapshot.data?.docs[index]['price'])*snapshot.data?.docs[index]['discountPercentage']/100}',
                                       style: Theme.of(context).textTheme.subtitle2),
                                   ],
                                 ),
@@ -174,7 +183,6 @@ class MyOrderScreen extends StatelessWidget {
               } else {
                 return const Center(child: CircularProgressIndicator());
               }
-
             }
           ) : noInternetDialog();
         }

@@ -114,10 +114,27 @@ class GeometryBoxDetailWidget extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,),
                               ),
                                Padding(
-                                padding: const EdgeInsets.only(left: 5,right: 5,top: 3),
-                                child : Text('₹ ${snapshot.data?.docs[index]['price']}',
-                                    maxLines: 2,overflow: TextOverflow.ellipsis,textAlign:TextAlign.start),
-                              ),
+                                 padding: const EdgeInsets.only(left: 5,right: 5,top: 3),
+                                 child: Row(
+                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                   children: [
+                                     Text('₹${snapshot.data?.docs[index]['price']}',
+                                         maxLines: 2,overflow: TextOverflow.ellipsis,textAlign:TextAlign.start,
+                                       style: const TextStyle(color: AppColor.greenColor,fontSize: 18),
+                                     ),
+
+                                     Container(
+                                       padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+                                       decoration: BoxDecoration(
+                                         color: AppColor.greenColor,
+                                         borderRadius: BorderRadius.circular(2)
+                                       ),
+                                       child: const Icon(Icons.arrow_forward_outlined,size:18,color: AppColor.whiteColor,),
+                                     )
+
+                                   ],
+                                 ),
+                               ),
                               const SizedBox(height: 5)
                             ],
                           ),

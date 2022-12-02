@@ -16,6 +16,7 @@ class AddGeometryBoxDetailsAuth{
         required int toolAvailable,
         required int discountPercentage,
         required String toolImages,
+        required String toolDescription,
         required double toolRating,
         required String currentUser,
         required String timestamp
@@ -27,6 +28,7 @@ class AddGeometryBoxDetailsAuth{
       userMobile: userMobile,
       toolName: toolName,
       publisherName: publisherName,
+      description: toolDescription,
       toolPrice: price,
       toolAvailable: toolAvailable,
       discountPercentage: discountPercentage,
