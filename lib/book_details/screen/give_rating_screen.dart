@@ -35,7 +35,7 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
       publisherName, timeStamp, userId,
       userEmail, userMobile, timestamp;
 
-  late int discountPercentage, bookAvailable;
+  late int discountPercentage, itemAvailable;
 
   giveRating() async{
     ratingList.clear();
@@ -43,14 +43,14 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
         .where('userEmail', isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
 
     var queryUserRatingSnapshots = await FirebaseCollection().userRatingCollection
-        .where('bookName', isEqualTo: widget.snapshotData['bookName']).get();
+        .where('bookName', isEqualTo: widget.snapshotData['name']).get();
 
     var queryBookSnapshots = await FirebaseCollection().addBookCollection
-        .where('bookName', isEqualTo: widget.snapshotData['bookName']).get();
+        .where('name', isEqualTo: widget.snapshotData['name']).get();
 
     for (var snapshot in querySnapShot.docChanges) {
       RatingAuth().userRating(
-        bookName: widget.snapshotData['bookName'],
+        bookName: widget.snapshotData['name'],
         currentUser: FirebaseAuth.instance.currentUser!.email.toString(),
         userRating: userRating,
         userGiveExprience: reviewController.text,
@@ -125,12 +125,12 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
 
         for (var bookSnapshot in queryBookSnapshots.docChanges) {
           authorName = bookSnapshot.doc.get('authorName');
-          bookDescription = bookSnapshot.doc.get('bookDescription');
+          bookDescription = bookSnapshot.doc.get('description');
           bookImages = bookSnapshot.doc.get('bookImages');
-          bookName = bookSnapshot.doc.get('bookName');
+          bookName = bookSnapshot.doc.get('name');
           bookVideo = bookSnapshot.doc.get('bookVideo');
           currentUser = bookSnapshot.doc.get('currentUser');
-          bookPrice = bookSnapshot.doc.get('bookPrice');
+          bookPrice = bookSnapshot.doc.get('price');
           selectedSemester =
               bookSnapshot.doc.get('selectedSemester');
           publisherName = bookSnapshot.doc.get('publisherName');
@@ -142,7 +142,7 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
           userMobile = bookSnapshot.doc.get('userMobile');
           discountPercentage =
               bookSnapshot.doc.get('discountPercentage');
-          bookAvailable = bookSnapshot.doc.get('bookAvailable');
+          itemAvailable = bookSnapshot.doc.get('itemAvailable');
         }
 
         AddBookDetailsAuth().addBookDetails(
@@ -155,7 +155,7 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
             bookImages: bookImages,
             bookVideo: bookVideo,
             discountPercentage: discountPercentage,
-            bookAvailable: bookAvailable,
+            itemAvailable: itemAvailable,
             selectedClass: selectedClass,
             selectedCourse: selectedCourse,
             selectedSemester: selectedSemester,
@@ -175,7 +175,7 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
     return Scaffold(
       backgroundColor: AppColor.appColor,
       appBar: AppBar(
-        title: Text(widget.snapshotData['bookName']),
+        title: Text(widget.snapshotData['name']),
         actions: [
           Visibility(
             visible: buttonVisible,
@@ -215,7 +215,7 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
                             stream: FirebaseCollection()
                                 .userRatingCollection
                                 .where('bookName',
-                                    isEqualTo: widget.snapshotData['bookName'])
+                                    isEqualTo: widget.snapshotData['name'])
                                 .where('currentUser',
                                     isEqualTo: FirebaseAuth
                                         .instance.currentUser?.email)
@@ -304,7 +304,7 @@ class _GiveReviewScreenState extends State<GiveReviewScreen> {
                 stream: FirebaseCollection()
                     .userRatingCollection
                     .where('bookName',
-                        isEqualTo: widget.snapshotData['bookName'])
+                        isEqualTo: widget.snapshotData['name'])
                     .snapshots(),
                 builder:
                     (context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {

@@ -31,7 +31,7 @@ class PaymentController{
         required double bookRating,
         required String currentUser,
         required String bookDescription,
-        required int bookAvailable,
+        required int itemAvailable,
         required String timeStamp,
         required BuildContext context}) async {
     try {
@@ -67,7 +67,7 @@ class PaymentController{
               selectedCourse: selectedCourse,
               selectedSemester: selectedSemester,
               userAddress: userAddress, authorName: authorName,
-              timestamp: timeStamp, bookAvailable: bookAvailable);
+              timestamp: timeStamp, itemAvailable: itemAvailable);
 
           AddBookDetailsAuth().addBookDetails(
             uId: userId,
@@ -86,7 +86,7 @@ class PaymentController{
             bookRating: bookRating,
             currentUser: currentUser,
             bookDescription: bookDescription,
-            bookAvailable:  bookAvailable,
+            itemAvailable:  itemAvailable,
           );
 
           //debugPrint('Payment Success');

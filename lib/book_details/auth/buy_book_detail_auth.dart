@@ -12,7 +12,7 @@ class BuyBookDetailAuth{
         required String userMobile,
         required String bookName,
         required String price,
-        required int bookAvailable,
+        required int itemAvailable,
         required int discountPercentage,
         required List bookImages,
         required String bookVideo,
@@ -32,7 +32,7 @@ class BuyBookDetailAuth{
       authorName: authorName,
       bookImages: bookImages,
       bookPrice: price,
-      bookAvailable: bookAvailable,
+      bookAvailable: itemAvailable,
       discountPercentage: discountPercentage,
       bookVideo: bookVideo,
       selectedClass: selectedClass,
@@ -41,7 +41,7 @@ class BuyBookDetailAuth{
       userAddress: userAddress,
       timeStamp: timestamp,
     );
-    FirebaseCollection().buyBookCollection.doc('$userEmail$bookName$bookAvailable').set(buyBookDetailModel.toJson()).whenComplete(() => debugPrint("Successfully order"))
+    FirebaseCollection().buyBookCollection.doc('$userEmail$bookName$itemAvailable').set(buyBookDetailModel.toJson()).whenComplete(() => debugPrint("Successfully order"))
         .catchError((e) => debugPrint(e));
   }
 }

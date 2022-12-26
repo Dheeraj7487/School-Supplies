@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_supplies_hub/profile/favorite_details_screen.dart';
 import 'package:school_supplies_hub/utils/app_image.dart';
 import 'package:school_supplies_hub/widgets/internet_screen.dart';
 import '../Firebase/firebase_collection.dart';
@@ -76,41 +77,65 @@ class ProfileScreen extends StatelessWidget {
                                         PopupMenuItem(
                                           value: 1,
                                           child: Row(
-                                            children: const [
-                                              Icon(Icons.person_outline,color: AppColor.whiteColor,size: 20),
-                                              SizedBox(
+                                            children: [
+                                              Image.asset(AppImage.userName,color: AppColor.whiteColor,height: 20,width: 20,fit: BoxFit.fill),
+                                              const SizedBox(
                                                 width: 10,
                                               ),
-                                              Text("Edit Profile",style: TextStyle(fontSize: 13))
+                                              const Text("Edit Profile",style: TextStyle(fontSize: 13))
                                             ],
                                           ),
                                         ),
                                         PopupMenuItem(
                                           value: 2,
                                           child: Row(
-                                            children: const [
-                                              Icon(Icons.rate_review_outlined,color: AppColor.whiteColor,size: 20),
-                                              SizedBox(
+                                            children: [
+                                              Image.asset(AppImage.myOrders,color: AppColor.whiteColor,height: 24,width: 24,fit: BoxFit.fill),
+                                              const SizedBox(
                                                 width: 10,
                                               ),
-                                              Text("My Orders",style: TextStyle(fontSize: 13))
+                                              const Text("My Orders",style: TextStyle(fontSize: 13))
                                             ],
                                           ),
                                         ),
                                         PopupMenuItem(
                                           value: 3,
                                           child: Row(
-                                            children: const [
-                                              Icon(Icons.logout,color: AppColor.whiteColor,size: 20,),
-                                              SizedBox(
+                                            children:  [
+                                              Image.asset(AppImage.wishlist,color: AppColor.whiteColor,height: 22,width: 22,fit: BoxFit.fill,),
+                                              const SizedBox(
                                                 width: 10,
                                               ),
-                                              Text("Logout",style: TextStyle(fontSize: 13))
+                                              const Text("Wishlist",style: TextStyle(fontSize: 13))
+                                            ],
+                                          ),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 4,
+                                          child: Row(
+                                            children:  [
+                                              Image.asset(AppImage.logout,color: AppColor.whiteColor,height: 20,width: 20,fit: BoxFit.fill),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              const Text("Logout",style: TextStyle(fontSize: 13))
+                                            ],
+                                          ),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 5,
+                                          child: Row(
+                                            children: [
+                                              Image.asset(AppImage.deleteAccount,color: AppColor.whiteColor,height: 20,width: 20,fit: BoxFit.fill),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              const Text("Delete Account",style: TextStyle(fontSize: 13,color: AppColor.redColor))
                                             ],
                                           ),
                                         ),
                                       ],
-                                      onSelected: (value) {
+                                      onSelected: (value) async{
                                         if (value == 1) {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder: (context)=>const EditProfileScreen()));
@@ -119,13 +144,16 @@ class ProfileScreen extends StatelessWidget {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder: (context)=>const MyOrderScreen()));
                                         }
-                                        else if (value == 3) {
-                                          FirebaseAuth.instance.signOut()
-                                              .then((value){
+                                        else if(value == 3){
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder: (context)=>const FavoriteDetailsScreen()));
+                                        }
+                                        else if (value == 4) {
+                                          FirebaseAuth.instance.signOut().then((value){
                                             LoginProvider().addUserDetail(
                                                 uId: data['userId'],
                                                 userName: data['userName'],
-                                              userAddress: data['userAddress'],
+                                                userAddress: data['userAddress'],
                                                 userEmail: data['userEmail'], userMobile: data['userMobile'],
                                                 fcmToken: '', rating: data['userRating'],
                                               currentUser: data['currentUser'], chooseClass: data['chooseClass'],
@@ -133,13 +161,46 @@ class ProfileScreen extends StatelessWidget {
                                             );
                                           });
                                           AppUtils.instance.clearPref().then((value) =>
+                                              Navigator.pushAndRemoveUntil( context,
+                                                  MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
+                                                  ModalRoute.withName('/')
+                                              ));
+                                        }
+                                        else if(value == 5) {
+                                          var favoriteData = await FirebaseCollection().favoriteCollection.
+                                          where('currentUser',isEqualTo : FirebaseAuth.instance.currentUser?.email).get();
+
+                                          var buyData = await FirebaseCollection().buyBookCollection.
+                                          where('userEmail',isEqualTo : FirebaseAuth.instance.currentUser?.email).get();
+
+                                          var bookData = await FirebaseCollection().addBookCollection.
+                                          where('currentUser',isEqualTo : FirebaseAuth.instance.currentUser?.email).get();
+
+                                          var toolData = await FirebaseCollection().addGeometryCollection.
+                                          where('currentUser',isEqualTo : FirebaseAuth.instance.currentUser?.email).get();
+
+                                          FirebaseAuth.instance.currentUser?.delete();
+                                          FirebaseCollection().userCollection.doc(FirebaseAuth.instance.currentUser?.email).delete().then((_){});
+                                          for(var snapShot in favoriteData.docChanges){
+                                            FirebaseCollection().favoriteCollection.doc('${snapShot.doc.get('currentUser')}${snapShot.doc.get('name')}').delete();
+                                          }
+                                          for(var snapShot in toolData.docChanges){
+                                            FirebaseCollection().addGeometryCollection.doc('${snapShot.doc.get('currentUser')}${snapShot.doc.get('name')}').delete();
+                                          }
+                                          for(var snapShot in buyData.docChanges){
+                                            FirebaseCollection().buyBookCollection.doc('${snapShot.doc.get('userEmail')}${snapShot.doc.get('name')}${snapShot.doc.get('available')}').delete();
+                                          }
+                                          for(var snapShot in bookData.docChanges){
+                                            FirebaseCollection().addBookCollection.doc('${snapShot.doc.get('currentUser')}${snapShot.doc.get('name')}').delete();
+                                          }
+
+                                          AppUtils.instance.clearPref().then((value) =>
                                               Navigator.pushAndRemoveUntil(
                                                   context,
                                                   MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
                                                   ModalRoute.withName('/')
                                               ));
                                         }
-
                                       },
                                     )
                                 )

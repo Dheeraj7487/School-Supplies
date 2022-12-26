@@ -84,15 +84,16 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                     imageUrl: "${snapshot.data?.docs[index]['bookImages'][0]}",
                                     height: MediaQuery.of(context).size.height/3,
                                     width: MediaQuery.of(context).size.width,fit: BoxFit.fill,
-                                    placeholder: (context, url) => Shimmer.fromColors(
-                                      highlightColor: AppColor.appColor,
-                                      baseColor: Colors.grey.shade100,
-                                      period: const Duration(seconds: 2),
-                                      child: SizedBox(
-                                        height: MediaQuery.of(context).size.height/3,
-                                        width: MediaQuery.of(context).size.width,
-                                      ),
-                                    ),
+                                    progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                        Shimmer.fromColors(
+                                          highlightColor: AppColor.appColor,
+                                          baseColor: Colors.grey.shade100,
+                                          period: const Duration(seconds: 2),
+                                          child: SizedBox(
+                                            height: MediaQuery.of(context).size.height/3,
+                                            width: MediaQuery.of(context).size.width,
+                                          ),
+                                        ),
                                     errorWidget: (context, url, error) => const Icon(Icons.error),
                                   ),
 
@@ -103,7 +104,7 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                       width: MediaQuery.of(context).size.width,fit: BoxFit.fill)*/
                               ),
                               Positioned(
-                                  bottom : 30,
+                                  bottom : MediaQuery.of(context).size.height/15,
                                   child: Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: const BoxDecoration(
@@ -113,11 +114,11 @@ class RecentlyAddedBookSliderWidget extends StatelessWidget {
                                             bottomRight: Radius.circular(10),
                                           )
                                       ),
-                                      child: Text(snapshot.data?.docs[index]['bookName'],overflow: TextOverflow.ellipsis,)),
+                                      child: Text(snapshot.data?.docs[index]['name'],overflow: TextOverflow.ellipsis,)),
                               ),
 
                               Positioned(
-                                  bottom : 10,
+                                  bottom : MediaQuery.of(context).size.height/40,
                                   left: MediaQuery.of(context).size.width/2.5,
                                   child: Row(
                                     children: List.generate(

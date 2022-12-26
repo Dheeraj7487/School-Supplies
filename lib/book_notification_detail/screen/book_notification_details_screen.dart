@@ -99,7 +99,7 @@ class _BookNotificationDetailScreenState extends State<BookNotificationDetailScr
                                               style: TextStyle(fontWeight: FontWeight.bold)
                                           ),
                                           TextSpan(
-                                            text: "${snapshot.data?.docs[index]['bookName']}",
+                                            text: "${snapshot.data?.docs[index]['name']}",
                                             style: Theme.of(context).textTheme.headline5,
                                           )
                                         ],

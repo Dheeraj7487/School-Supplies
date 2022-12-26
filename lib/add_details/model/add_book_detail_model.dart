@@ -8,14 +8,14 @@ class AddBookDetailModel {
   String? bookVideo;
   String? selectedClass;
   String? price;
-  int? bookAvailable;
+  int? itemAvailable;
   int? discountPercentage;
   String? selectedCourse;
   String? selectedSemester;
   double? bookRating;
   String? currentUser;
   String? timeStamp;
-  String? bookDescription;
+  String? description;
   String? authorName;
 
   AddBookDetailModel(
@@ -25,11 +25,11 @@ class AddBookDetailModel {
         this.userMobile,
         this.bookName,
         this.authorName,
-        this.bookDescription,
+        this.description,
         this.bookImages,
         this.bookVideo,
         this.price,
-        this.bookAvailable,
+        this.itemAvailable,
         this.discountPercentage,
         this.selectedClass,
         this.selectedCourse,
@@ -44,12 +44,12 @@ class AddBookDetailModel {
     publisherName = json['publisherName'];
     userEmail = json['userEmail'];
     userMobile = json['userMobile'];
-    bookName = json['bookName'];
-    price = json['bookPrice'];
-    bookAvailable = json['bookAvailable'];
+    bookName = json['name'];
+    price = json['price'];
+    itemAvailable = json['itemAvailable'];
     discountPercentage = json['discountPercentage'];
     authorName = json['authorName'];
-    bookDescription = json['bookDescription'];
+    description = json['description'];
     bookImages = json['bookImages'];
     bookVideo = json['bookVideo'];
     selectedClass = json['selectedClass'];
@@ -66,11 +66,11 @@ class AddBookDetailModel {
     data['publisherName'] = publisherName;
     data['userEmail'] = userEmail;
     data['userMobile'] = userMobile;
-    data['bookName'] = bookName;
+    data['name'] = bookName;
     data['authorName'] = authorName;
-    data['bookDescription'] = bookDescription;
-    data['bookPrice'] = price;
-    data['bookAvailable'] = bookAvailable;
+    data['description'] = description;
+    data['price'] = price;
+    data['itemAvailable'] = itemAvailable;
     data['discountPercentage'] = discountPercentage;
     data['bookImages'] = bookImages;
     data['bookVideo'] = bookVideo;

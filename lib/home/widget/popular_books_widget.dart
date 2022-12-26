@@ -124,7 +124,7 @@ class PopularBookWidget extends StatelessWidget {
                               const SizedBox(height: 5),
                               Padding(
                                 padding: const EdgeInsets.only(right: 10),
-                                child:  Text(snapshot.data?.docs[index]['bookName'],
+                                child:  Text(snapshot.data?.docs[index]['name'],
                                     style: Theme.of(context).textTheme.subtitle1,
                                     maxLines: 2,overflow: TextOverflow.ellipsis),
                               ),

@@ -43,10 +43,10 @@ class RecentBookWidget extends StatelessWidget {
                 const SizedBox(height: 10),
                 GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 4,
+                      crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 3,
                       mainAxisSpacing: 10,
                       childAspectRatio: 1.1,
-                      mainAxisExtent: 230
+                      mainAxisExtent: 215
                   ),
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
@@ -88,10 +88,10 @@ class RecentBookWidget extends StatelessWidget {
                                   errorWidget: (context, url, error) => const Icon(Icons.error),
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 7),
                               Container(
                                 padding: const EdgeInsets.only(left: 5,right: 5),
-                                child: Text(snapshot.data?.docs[index]['bookName'],
+                                child: Text(snapshot.data?.docs[index]['name'],
                                   textAlign:TextAlign.start,maxLines: 2,
                                   style: Theme.of(context).textTheme.headline4,
                                   overflow: TextOverflow.ellipsis,),
@@ -117,7 +117,7 @@ class RecentBookWidget extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 5,right: 5,top: 3),
-                                child : Text('₹ ${snapshot.data?.docs[index]['bookPrice']}',
+                                child : Text('₹ ${snapshot.data?.docs[index]['price']}',
                                     maxLines: 2,overflow: TextOverflow.ellipsis,textAlign:TextAlign.start),
                               ),
                               const SizedBox(height: 5)

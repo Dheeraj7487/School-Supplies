@@ -35,7 +35,6 @@ class _AddBookDetailState extends State<AddBookDetail> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController bookNameController = TextEditingController();
-  TextEditingController toolNameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController authorController = TextEditingController();
@@ -44,7 +43,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
   String geometryImageName ='';
   bool checkBoxValue = false;
   bool geometryBoxValue = false;
-  int counterValue = 0,bookAdded = 1;
+  int counterValue = 0,toolAdded = 1;
 
   Uint8List? geometryFile;
   String? imagePath;
@@ -113,7 +112,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
               bookDescription: descriptionController.text,
               price: priceController.text,
               discountPercentage : counterValue,
-              bookAvailable: bookAdded,
+              itemAvailable: toolAdded,
               bookImages: imagesUrls,
               bookVideo: bookVideoUrl, selectedClass: Provider.of<AddBookDetailProvider>(context,listen:false).selectClass.toString(),
               selectedCourse: Provider.of<AddBookDetailProvider>(context,listen:false).selectCourse.toString(),
@@ -161,8 +160,8 @@ class _AddBookDetailState extends State<AddBookDetail> {
           price: priceController.text,
           toolDescription: descriptionController.text,
           discountPercentage: counterValue,
-          toolAvailable: bookAdded,
-          toolName: toolNameController.text,
+          itemAvailable: toolAdded,
+          toolName: Provider.of<AddBookDetailProvider>(context,listen:false).chooseTool.toString(),
           toolImages: imageUrl.toString(),
           toolRating: 0,
           currentUser: '${FirebaseAuth.instance.currentUser?.email}',
@@ -202,13 +201,14 @@ class _AddBookDetailState extends State<AddBookDetail> {
         });
       }
     }
-  }
+  } */
 
   @override
   void initState() {
     super.initState();
-    userClassName();
-  }*/
+    //userClassName();
+    Provider.of<AddBookDetailProvider>(context,listen:false).willPopScope();
+  }
 
   getGeometryImage() async {
     try {
@@ -242,7 +242,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
               key: _formKey,
               child: Column(
                 children: [
-                  Image.asset(AppImage.oldBook,height: 170,width: double.infinity,fit: BoxFit.fill,),
+                  Image.asset(AppImage.oldBook,height: 200,width: double.infinity,fit: BoxFit.fill,),
                   Consumer<AddBookDetailProvider>(
                       builder: (BuildContext context, snapshot, Widget? child) {
                         return Padding(
@@ -282,18 +282,14 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                   children: [
                                     const Text('Tool Name'),
                                     const SizedBox(height: 5),
-                                    TextFieldWidget().textFieldWidget(
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType: TextInputType.text,
-                                      hintText: "Enter Tool Name",
-                                      controller: toolNameController,
-                                      prefixIcon: const Icon(Icons.view_compact_sharp,color: AppColor.whiteColor),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty || value.trim().isEmpty) {
-                                          return 'Please enter tool name';
-                                        }
-                                        return null;
-                                      },
+                                    appDropDown(
+                                        value: snapshot.chooseTool,
+                                        hint: 'Select Tool',
+                                        onChanged: (String? newValue) {
+                                          snapshot.chooseTool = newValue!;
+                                          snapshot.getChooseTool;
+                                        },
+                                        items:  snapshot.chooseTools
                                     ),
 
                                     const SizedBox(height: 20),
@@ -545,7 +541,7 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                       GestureDetector(
                                         onTap: (){
                                           setState(() {
-                                            bookAdded++;
+                                            toolAdded++;
                                           });
                                         },
                                         child: const Padding(
@@ -553,12 +549,12 @@ class _AddBookDetailState extends State<AddBookDetail> {
                                           child: Icon(Icons.add,color: AppColor.whiteColor,),
                                         ),
                                       ),
-                                      Text("$bookAdded"),
+                                      Text("$toolAdded"),
                                       GestureDetector(
                                         onTap: (){
-                                          if(bookAdded !=1){
+                                          if(toolAdded !=1){
                                             setState(() {
-                                              bookAdded--;
+                                              toolAdded--;
                                             });
                                           }
                                         },

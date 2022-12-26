@@ -8,15 +8,15 @@ import 'package:school_supplies_hub/utils/app_color.dart';
 import '../../home/provider/internet_provider.dart';
 import '../../widgets/internet_screen.dart';
 
-class CategoryBookListScreen extends StatefulWidget {
+class CategoryClassScreen extends StatefulWidget {
   String getClassName;
-  CategoryBookListScreen({Key? key,required this.getClassName}) : super(key: key);
+  CategoryClassScreen({Key? key,required this.getClassName}) : super(key: key);
 
   @override
-  State<CategoryBookListScreen> createState() => _CategoryBookListScreenState();
+  State<CategoryClassScreen> createState() => _CategoryClassScreenState();
 }
 
-class _CategoryBookListScreenState extends State<CategoryBookListScreen> {
+class _CategoryClassScreenState extends State<CategoryClassScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,14 +59,14 @@ class _CategoryBookListScreenState extends State<CategoryBookListScreen> {
                               Image.network('${snapshot.data?.docs[index]['bookImages'][0]}',
                                 color: const Color.fromRGBO(255, 255, 255, 0.6),
                                 colorBlendMode: BlendMode.modulate,
-                                height: 150,width: double.infinity,fit: BoxFit.cover,),
+                                height: 200,width: double.infinity,fit: BoxFit.fill,),
                               const SizedBox(height: 5,),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(5.0,0,10,10),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('${snapshot.data?.docs[index]['bookName']}',
+                                    Text('${snapshot.data?.docs[index]['name']}',
                                       style: Theme.of(context).textTheme.headline3,maxLines: 2,overflow: TextOverflow.ellipsis,),
                                     const SizedBox(height: 5,),
                                     Text('${snapshot.data?.docs[index]['selectedCourse']} || '
@@ -75,7 +75,7 @@ class _CategoryBookListScreenState extends State<CategoryBookListScreen> {
                                     ' || ${snapshot.data?.docs[index]['selectedSemester']}' : ''}',
                                       style: Theme.of(context).textTheme.subtitle2,maxLines: 1,),
                                     const SizedBox(height: 5,),
-                                    Text('${snapshot.data?.docs[index]['bookDescription']}',
+                                    Text('${snapshot.data?.docs[index]['description']}',
                                       style: Theme.of(context).textTheme.headline6,maxLines: 3,overflow: TextOverflow.ellipsis,),
                                     const SizedBox(height: 5,),
                                   ],

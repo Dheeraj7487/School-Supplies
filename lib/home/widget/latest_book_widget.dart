@@ -32,11 +32,12 @@ class LatestBookWidget extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 10),
         StreamBuilder(
             stream: FirebaseCollection().addBookCollection.snapshots(),
             builder: (context,AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
               if(snapshot.hasError){
-                return Center(child: HorizontalShimmers(height: 175,width: 150,));
+                return HorizontalShimmers(height: 175,width: 150,);
               } else if(snapshot.hasData){
                 return SizedBox(
                   height: 175,
@@ -55,8 +56,8 @@ class LatestBookWidget extends StatelessWidget {
                             width: 150,
                             padding: const EdgeInsets.only(left:20,right: 5),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              //mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
                                   margin: const EdgeInsets.fromLTRB(3,15,3,0),
@@ -79,7 +80,7 @@ class LatestBookWidget extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 5,),
-                                Text('₹ ${snapshot.data?.docs[index]['bookPrice']}',
+                                Text('₹ ${snapshot.data?.docs[index]['price']}',
                                     style: const TextStyle(color: AppColor.redColor,fontSize: 16),
                                     maxLines: 1,overflow: TextOverflow.ellipsis),
                               ],
@@ -90,10 +91,10 @@ class LatestBookWidget extends StatelessWidget {
                   ),
                 );
               } else {
-                return Center(child: HorizontalShimmers(height: 175,width: 150));
+                return HorizontalShimmers(height: 175,width: 150);
               }
             }
-        )
+        ),
       ],
     );
   }

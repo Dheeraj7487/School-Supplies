@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,11 +6,8 @@ import 'package:school_supplies_hub/login/screen/login_screen.dart';
 import 'package:school_supplies_hub/widgets/textfield_widget.dart';
 import '../../add_details/provider/add_book_detail_provider.dart';
 import '../../utils/app_color.dart';
-import '../../utils/app_utils.dart';
 import '../../widgets/button_widget.dart';
 import '../../widgets/dropdown_widget.dart';
-import '../auth/login_provider.dart';
-import '../provider/loading_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -36,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     // TODO: implement initState
+    Provider.of<AddBookDetailProvider>(context,listen:false).willPopScope();
     FirebaseMessaging.instance.getToken().then((value) {
       debugPrint('Token: $value');
       setState(() {
@@ -251,32 +248,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onTap: () async{
                               debugPrint('Selected Class ${Provider.of<AddBookDetailProvider>(context,listen: false).selectClass}');
                               if(_formKey.currentState!.validate()){
-                                Provider.of<LoadingProvider>(context,listen: false).startLoading();
-                                User? user = await LoginAuth.registerUsingEmailPassword(
+                                // Provider.of<LoadingProvider>(context,listen: false).startLoading();
+                                await LoginAuth.registerUsingEmailPassword(
                                     name: nameController.text.trim(),
                                     email: emailController.text.trim(),
                                     mobile: phoneController.text.trim(),
+                                    address: addressController.text.trim(),
                                     password: passwordController.text.trim(),
+                                    fcmToken: fcmToken.toString(),
                                     context: context
                                 );
-
-                                if(user !=null){
-                                  LoginProvider().addUserDetail(
-                                      uId: "${FirebaseAuth.instance.currentUser?.uid}",
-                                      userName: nameController.text.trim(),
-                                      userEmail: emailController.text.trim(),
-                                      userMobile: phoneController.text.trim(),
-                                      userAddress: addressController.text.trim(),
-                                      fcmToken: fcmToken.toString(),
-                                      rating: 0,
-                                      chooseClass: snapshot.chooseClass.toString(),
-                                      currentUser: "${FirebaseAuth.instance.currentUser?.email}",
-                                      timestamp: DateTime.now().toString()).then((value) {
-                                    AppUtils.instance.showSnackBar(context, 'Register Successfully');
-                                    Provider.of<LoadingProvider>(context,listen: false).stopLoading();
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-                                  });
-                                }
                               }
                             },
                           );

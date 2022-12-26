@@ -1,5 +1,6 @@
 class AddGeometryBoxDetailModel {
   String? userId;
+  String? docId;
   String? publisherName;
   String? userEmail;
   String? userMobile;
@@ -7,7 +8,7 @@ class AddGeometryBoxDetailModel {
   String? toolImages;
   String? description;
   String? toolPrice;
-  int? toolAvailable;
+  int? itemAvailable;
   int? discountPercentage;
   double? toolRating;
   String? currentUser;
@@ -15,6 +16,7 @@ class AddGeometryBoxDetailModel {
 
   AddGeometryBoxDetailModel(
       { this.userId,
+        this.docId,
         this.publisherName,
         this.userEmail,
         this.userMobile,
@@ -22,7 +24,7 @@ class AddGeometryBoxDetailModel {
         this.description,
         this.toolImages,
         this.toolPrice,
-        this.toolAvailable,
+        this.itemAvailable,
         this.discountPercentage,
         this.toolRating,
         this.currentUser,
@@ -31,16 +33,17 @@ class AddGeometryBoxDetailModel {
 
   AddGeometryBoxDetailModel.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
+    docId = json['docId'];
     publisherName = json['publisherName'];
     userEmail = json['userEmail'];
     userMobile = json['userMobile'];
-    toolName = json['toolName'];
-    description = json['toolDescription'];
+    toolName = json['name'];
+    description = json['description'];
     toolPrice = json['price'];
-    toolAvailable = json['toolAvailable'];
+    itemAvailable = json['itemAvailable'];
     discountPercentage = json['discountPercentage'];
     toolImages = json['toolImages'];
-    toolRating = json['toolRating'];
+    toolRating = json['rating'];
     currentUser = json['currentUser'];
     timeStamp = json['timeStamp'];
   }
@@ -48,16 +51,17 @@ class AddGeometryBoxDetailModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['userId'] = userId;
+    data['docId'] = docId;
     data['publisherName'] = publisherName;
     data['userEmail'] = userEmail;
     data['userMobile'] = userMobile;
-    data['toolName'] = toolName;
-    data['toolDescription'] = description;
+    data['name'] = toolName;
+    data['description'] = description;
     data['price'] = toolPrice;
-    data['toolAvailable'] = toolAvailable;
+    data['itemAvailable'] = itemAvailable;
     data['discountPercentage'] = discountPercentage;
     data['toolImages'] = toolImages;
-    data['toolRating'] = toolRating;
+    data['rating'] = toolRating;
     data['currentUser'] = currentUser;
     data['timeStamp'] = timeStamp;
     return data;

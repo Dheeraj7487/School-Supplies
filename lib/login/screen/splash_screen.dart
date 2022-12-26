@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:school_supplies_hub/utils/app_image.dart';
 
+import '../../main.dart';
 import '../../utils/app_color.dart';
 import '../../utils/app_preference_key.dart';
 import '../../utils/app_utils.dart';
@@ -42,6 +43,7 @@ class SplashScreenState extends State<SplashScreen>{
   @override
   void initState() {
     super.initState();
+    flutterLocalNotificationsPlugin.cancelAll();
     getPreferenceData();
   }
 

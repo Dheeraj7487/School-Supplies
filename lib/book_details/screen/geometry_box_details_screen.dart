@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:school_supplies_hub/book_details/auth/add_to_favorite_auth.dart';
 import '../../Firebase/firebase_collection.dart';
 import '../../add_details/auth/add_geometry_details_auth.dart';
-import '../../payment/google_payment.dart';
-import '../../payment/paytm.dart';
+import '../../payment/geomatry_stripe_controller.dart';
+import '../../payment/payment_screen.dart';
 import '../../utils/app_color.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 import '../../utils/app_image.dart';
 import '../auth/buy_geometry_box_detail_auth.dart';
 
@@ -27,6 +29,24 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
   late Razorpay _razorpay;
   String? userName,userEmail,userMobile,userAddress;
 
+  boolFavoriteCheck() async{
+    var checkData = await FirebaseCollection().favoriteCollection.
+    where('${widget.snapshotData['currentUser']}'
+        '${widget.snapshotData['name']}').get();
+
+    for(var snapshot in checkData.docChanges){
+     // setState(() {
+
+      if(snapshot.doc.get('currentUser') == FirebaseAuth.instance.currentUser?.email
+          && widget.snapshotData['name'] == snapshot.doc.get('name')) {
+        favorite = true;
+        debugPrint('data Found');
+      }
+
+     // });
+    }
+  }
+
   getUserData() async {
     var userData = await FirebaseCollection().userCollection
         .where('userEmail', isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
@@ -41,8 +61,6 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
   }
 
   void updateToolStock(){
-    int toolStock = widget.snapshotData['toolAvailable'] - 1;
-    debugPrint('Tool Stock $toolStock');
 
     AddGeometryBoxDetailsAuth().addGeometryBoxDetails(
         uId: widget.snapshotData['userId'],
@@ -50,16 +68,15 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
         userEmail: widget.snapshotData['userEmail'],
         userMobile: widget.snapshotData['userMobile'],
         price: widget.snapshotData['price'],
-        toolDescription: widget.snapshotData['toolDescription'],
+        toolDescription: widget.snapshotData['description'],
         discountPercentage: widget.snapshotData['discountPercentage'],
-        toolAvailable: widget.snapshotData['toolAvailable'] - 1,
-        toolName: widget.snapshotData['toolName'],
+        itemAvailable: widget.snapshotData['itemAvailable'] - 1,
+        toolName: widget.snapshotData['name'],
         toolImages: widget.snapshotData['toolImages'],
-        toolRating: widget.snapshotData['toolRating'],
+        toolRating: widget.snapshotData['rating'],
         currentUser: widget.snapshotData['currentUser'],
         timestamp: DateTime.now().toString()
     );
-
   }
 
   void openCheckout() async {
@@ -70,7 +87,7 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
     var options = {
       'key': 'rzp_test_NNbwJ9tmM0fbxj',
       'amount': amount.floor()*100,
-      'name': "${widget.snapshotData['toolName']}",
+      'name': "${widget.snapshotData['name']}",
       'description': "",
       'retry': {'enabled': true, 'max_count': 1},
       'send_sms_hash': true,
@@ -101,8 +118,8 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
         userMobile: userMobile.toString(),
         price: '${int.parse(amount.floor().toString())}',
         discountPercentage: widget.snapshotData['discountPercentage'],
-        toolAvailable: widget.snapshotData['toolAvailable'] - 1,
-        toolName: widget.snapshotData['toolName'],
+        toolAvailable: widget.snapshotData['itemAvailable'] - 1,
+        toolName: widget.snapshotData['name'],
         toolImages: widget.snapshotData['toolImages'],
         timestamp: DateTime.now().toString(),
         userAddress: userAddress.toString()
@@ -123,6 +140,7 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
 
   @override
   void initState()  {
+    boolFavoriteCheck();
     getUserData();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
@@ -168,15 +186,49 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
                   Positioned(
                       right: 10,top: 7,
                       child: IconButton(
-                        onPressed: (){
-                          setState(() {
-                            favorite = !favorite;
-                          });
+                        onPressed: () async{
+                          var checkData = await FirebaseCollection().favoriteCollection.
+                          where('${widget.snapshotData['currentUser']}'
+                              '${widget.snapshotData['name']}').get();
+
+                          if(favorite == false){
+                            favorite = true;
+                            AddToFavoriteAuth().addToFavorite(
+                                publisherName: widget.snapshotData['publisherName'],
+                                userEmail: widget.snapshotData['userEmail'],
+                                userMobile: widget.snapshotData['userMobile'],
+                                name: widget.snapshotData['name'], price: widget.snapshotData['price'],
+                                itemAvailable: widget.snapshotData['itemAvailable'],
+                                discountPercentage: widget.snapshotData['discountPercentage'],
+                                toolImages: widget.snapshotData['toolImages'],
+                                timestamp: widget.snapshotData['timeStamp'],
+                                uId:  widget.snapshotData['userId'],
+                                description:  widget.snapshotData['description'],
+                                rating:  widget.snapshotData['rating'],
+                                currentUser:  '${FirebaseAuth.instance.currentUser?.email}',
+                                authorName: '', selectedSemester: '', selectedCourse: '',
+                                selectedClass: '', bookImages: [], bookVideo: '');
+                          }
+                          else {
+                            for (var snapshot in checkData.docChanges) {
+                              if (snapshot.doc.get('currentUser') == FirebaseAuth.instance.currentUser?.email &&
+                                  widget.snapshotData['name'] == snapshot.doc.get('name')) {
+
+                                debugPrint('${snapshot.doc.get('currentUser') == FirebaseAuth.instance.currentUser?.email}');
+                                debugPrint('${widget.snapshotData['name'] ==
+                                    snapshot.doc.get('name')}');
+
+                                favorite = false;
+                                FirebaseCollection().favoriteCollection.doc(
+                                    '${FirebaseAuth.instance.currentUser?.email}''${widget.snapshotData['name']}').delete();
+                              }
+                            }
+                          }
+                          setState(() {});
                         },
                         icon: Icon(favorite ? Icons.favorite : Icons.favorite_border,size: 30,color: AppColor.greenColor,),
                       )
                   )
-
                 ],
               ),
               Padding(
@@ -187,7 +239,7 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(widget.snapshotData['toolName'],
+                          child: Text(widget.snapshotData['name'],
                             style: Theme.of(context).textTheme.headline2,maxLines: 2,overflow: TextOverflow.ellipsis),
                         ),
                         const SizedBox(width: 10),
@@ -283,14 +335,14 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
                         Expanded(child: Text('Discount : ${widget.snapshotData['discountPercentage']}%',
                           style: const TextStyle(fontWeight: FontWeight.bold),)),
                         Visibility(
-                          visible: widget.snapshotData['toolAvailable'] != 0,
+                          visible: widget.snapshotData['itemAvailable'] != 0,
                           child: Container(
                             padding: const EdgeInsets.fromLTRB(15,7,15,7),
                             decoration: BoxDecoration(
                                 color: AppColor.darkWhiteColor,
                                 borderRadius: BorderRadius.circular(10)
                             ),
-                            child: Text('In Stock ${widget.snapshotData['toolAvailable']}',
+                            child: Text('In Stock ${widget.snapshotData['itemAvailable']}',
                               style: const TextStyle(color : AppColor.appColor,fontWeight: FontWeight.w500),),
                           ),
                         )
@@ -300,7 +352,7 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
                     const SizedBox(height: 20),
                     Text('Description', style: Theme.of(context).textTheme.headline4),
                     const SizedBox(height: 5),
-                    Text(widget.snapshotData['toolDescription']),
+                    Text(widget.snapshotData['description']),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -311,9 +363,9 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
 
         bottomNavigationBar: widget.snapshotData['currentUser'] == FirebaseAuth.instance.currentUser?.email ?
         const SizedBox() : Padding(
-          padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
+          padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
           child: GestureDetector(
-            onTap: widget.snapshotData['toolAvailable'] == 0 ? null : () async {
+            onTap: widget.snapshotData['itemAvailable'] == 0 ? null : () async {
               showModalBottomSheet(
                 context: context,
                 backgroundColor: Colors.transparent,
@@ -342,7 +394,61 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
                                         },
                                         child: bottomSheet(AppImage.razorpay)),
                                     const SizedBox(height: 10,),
+
                                     GestureDetector(
+                                        onTap: () async {
+                                          double amount = double.parse(widget.snapshotData['price']);
+                                          amount = amount - amount *
+                                              widget.snapshotData['discountPercentage'] / 100;
+                                          // print(int.parse(amount.floor().toString()));
+                                          setState(() {});
+                                          GeometryPaymentController().makePayment(
+                                              amount: '${int.parse(amount.floor().toString())}',
+                                              discountPercentage: widget.snapshotData['discountPercentage'],
+                                              currency: 'INR',
+                                              context: context,
+                                              publisherName: '${widget.snapshotData['publisherName']}',
+                                              userEmail: userEmail.toString(),
+                                              userMobile: userMobile.toString(),
+                                              userAddress: userAddress.toString(),
+                                              toolName: '${widget.snapshotData['name']}',
+                                              toolImage: '${widget.snapshotData['toolImages']}',
+                                              timeStamp: DateTime.now().toString(),
+                                              userId: widget.snapshotData['userId'],
+                                              currentUser: widget.snapshotData['currentUser'],
+                                              toolDescription: widget.snapshotData['description'],
+                                              itemAvailable: widget.snapshotData['itemAvailable'] - 1,
+                                              toolPrice: '${widget.snapshotData['price']}',
+                                              toolRating: widget.snapshotData['rating']
+                                          );
+
+                                          await stripe.Stripe.instance.initPaymentSheet(
+                                              paymentSheetParameters: stripe.SetupPaymentSheetParameters(
+                                                customerId: paymentIntentData?['customer'],
+                                                setupIntentClientSecret: paymentIntentData?['client_secret'],
+                                                paymentIntentClientSecret: paymentIntentData?['client_secret'],
+                                                customerEphemeralKeySecret: paymentIntentData?['ephemeralKey'],
+                                                style: ThemeMode.dark,
+                                                billingDetails: stripe.BillingDetails(name: userName.toString(),
+                                                  email: 'mailto:${userEmail.toString()}',
+                                                  phone: userMobile.toString(),
+                                                  /*address: stripe.Address(
+                                                            line1: 'shivranjni',
+                                                            line2: 'shivranjni',
+                                                            state: 'Gujarat',
+                                                            postalCode: '12345',
+                                                            city: 'Germany',
+                                                            country: 'Germany')*/
+                                                ),
+                                              )).then((value) async {
+                                            await stripe.Stripe.instance.presentPaymentSheet().then((value) {});
+                                          });
+                                          Navigator.push(context, MaterialPageRoute(
+                                              builder: (context) => const CheckOutPayment()));
+                                        },
+                                        child: bottomSheet(AppImage.stripe,)),
+
+                                    /* GestureDetector(
                                         onTap: () async{
                                           await PaytmConfig().generateTxnToken(1, 'OREDRID_7487026406');
                                         }, child: bottomSheet(AppImage.paytm)),
@@ -352,7 +458,7 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
                                           Navigator.push(context, MaterialPageRoute(builder: (context)=>const GooglePayScreen()));
                                         },
                                         child: bottomSheet(AppImage.googlePay)),
-                                    const SizedBox(height: 10,),
+                                    const SizedBox(height: 10,), */
                                   ],
                                 ),
                               ),
@@ -373,7 +479,7 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
               child: SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: Center(child: Text( widget.snapshotData['toolAvailable'] == 0 ? 'Out of Stock' : 'Buy Now')),
+                child: Center(child: Text( widget.snapshotData['itemAvailable'] == 0 ? 'Out of Stock' : 'Buy Now')),
               ),
             ),
           ),
@@ -422,6 +528,4 @@ class _GeometryBoxDetailScreenState extends State<GeometryBoxDetailScreen> {
       ),
     );
   }
-
-
 }

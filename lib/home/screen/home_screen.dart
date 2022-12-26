@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/utils/app_color.dart';
 import 'package:school_supplies_hub/widgets/internet_screen.dart';
-import '../../Firebase/firebase_collection.dart';
 import '../../add_details/add_book_details_screen.dart';
 import '../../profile/edit_profile_screen.dart';
+import '../provider/home_provider.dart';
 import '../provider/internet_provider.dart';
 import '../widget/geometry_box_detail_widget.dart';
 import '../widget/recent_book_widget.dart';
@@ -21,34 +21,35 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>{
 
-  String? userName = ' ';
+  // String? userName = ' ';
+  //
+  // Future getUserData() async{
+  //   var shopQuerySnapshot = await FirebaseCollection().userCollection
+  //       .where('userEmail', isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
+  //   for(var snapShot in shopQuerySnapshot.docChanges){
+  //     if(mounted){
+  //       setState(() {
+  //         userName = snapShot.doc.get('userName');
+  //       });
+  //     }
+  //   }
+  // }
 
-  Future shopDetailsCheck() async{
-    var shopQuerySnapshot = await FirebaseCollection().userCollection
-        .where('userEmail', isEqualTo: FirebaseAuth.instance.currentUser?.email).get();
-    for(var snapShot in shopQuerySnapshot.docChanges){
-      if(mounted){
-        setState(() {
-          userName = snapShot.doc.get('userName');
-        });
-      }
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    shopDetailsCheck();
+    Provider.of<HomeProvider>(context,listen: false).getUserData();
   }
 
   @override
   Widget build(BuildContext context) {
     var hour = DateTime.now().hour;
-    return Consumer<InternetProvider>(
-        builder: (context, internetSnapshot, _) {
+    return Consumer2<InternetProvider,HomeProvider>(
+        builder: (context, internetSnapshot,homeSnapshot, _) {
           internetSnapshot.checkInternet().then((value) {});
-          return internetSnapshot.isInternet ?
-          SafeArea(
+          return !internetSnapshot.isInternet ?
+           noInternetDialog() : SafeArea(
             child: Scaffold(
               backgroundColor: AppColor.appColor,
               appBar: AppBar(
@@ -82,18 +83,12 @@ class _HomeScreenState extends State<HomeScreen>{
                               children: [
                                 Expanded(
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .center,
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(userName == null
-                                          ? ''
-                                          : 'Hi, $userName'
-                                          , style: Theme
-                                              .of(context)
-                                              .textTheme
-                                              .headline6),
+                                      Text(homeSnapshot.userName == null
+                                          ? '' : 'Hi, ${homeSnapshot.userName}'
+                                          , style: Theme.of(context).textTheme.headline6),
                                       const SizedBox(height: 3),
                                       Text(hour < 12 ? 'Good Morning' :
                                       hour < 17
@@ -131,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen>{
                                                               width: 40,
                                                               child: Center(
                                                                 child: Text(
-                                                                  '${userName
+                                                                  '${homeSnapshot.userName
                                                                       ?.substring(
                                                                       0,
                                                                       1)
@@ -153,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen>{
                                                                 .start,
                                                             children: [
                                                               Text(
-                                                                  '$userName'),
+                                                                  '${homeSnapshot.userName}'),
                                                               const SizedBox(
                                                                 height: 3,),
                                                               Text(
@@ -213,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen>{
                                           width: 40,
                                           child: Center(
                                             child: Text(
-                                              '${userName?.substring(0, 1)
+                                              '${homeSnapshot.userName?.substring(0, 1)
                                                   .toUpperCase()}',
                                               style: const TextStyle(
                                                   color: AppColor.appColor),
@@ -235,7 +230,8 @@ class _HomeScreenState extends State<HomeScreen>{
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: Column(
-                    children: const [
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:  const [
                       RecentlyAddedBookSliderWidget(),
                       SizedBox(height: 10),
                       LatestBookWidget(),
@@ -261,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen>{
                     Icons.add, color: AppColor.appColor), //icon inside button
               ),
             ),
-          ) : noInternetDialog();
+          );
         }
     );
   }

@@ -110,7 +110,7 @@ class _PopularBooksScreenState extends State<PopularBooksScreen> {
                             children: [
                               ClipRRect(
                                 child: Image.network(books[index]['bookImages'][0],
-                                  height: 90,width: 70,fit: BoxFit.fill,),
+                                  height: 90,width: 90,fit: BoxFit.fill,),
                               ),
                               Expanded(
                                 child: Padding(
@@ -123,7 +123,7 @@ class _PopularBooksScreenState extends State<PopularBooksScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
-                                            child: Text(books[index]['bookName'],
+                                            child: Text(books[index]['name'],
                                                 style: Theme.of(context).textTheme.headline4,maxLines: 1,overflow: TextOverflow.ellipsis),
                                           ),
                                           Container(
@@ -132,7 +132,7 @@ class _PopularBooksScreenState extends State<PopularBooksScreen> {
                                               //color: AppColor.darkGreen,
                                                 borderRadius: BorderRadius.circular(10)
                                             ),
-                                            child: Text('₹ ${books[index]['bookPrice']}',
+                                            child: Text('₹ ${books[index]['price']}',
                                                 style: Theme.of(context).textTheme.headline5,maxLines: 1,overflow: TextOverflow.ellipsis),
                                           ),
                                         ],

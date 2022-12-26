@@ -61,7 +61,7 @@ class GeometryBoxDetailWidget extends StatelessWidget {
                 ),
                 GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 4,
+                      crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 3,
                       mainAxisSpacing: 10,
                       childAspectRatio: 1.1,
                       mainAxisExtent: 200
@@ -108,7 +108,7 @@ class GeometryBoxDetailWidget extends StatelessWidget {
                               const SizedBox(height: 10),
                               Container(
                                 padding: const EdgeInsets.only(left: 5,right: 5),
-                                child: Text(snapshot.data?.docs[index]['toolName'],
+                                child: Text(snapshot.data?.docs[index]['name'],
                                   textAlign:TextAlign.start,maxLines: 2,
                                   style: Theme.of(context).textTheme.headline4,
                                   overflow: TextOverflow.ellipsis,),

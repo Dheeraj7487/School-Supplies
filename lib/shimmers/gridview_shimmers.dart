@@ -14,7 +14,7 @@ class GridViewShimmers extends StatelessWidget {
       period: const Duration(seconds: 10),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 4,
+            crossAxisCount: ResponsiveWidget.isSmallScreen(context) ? 2 : 3,
             mainAxisSpacing: 10,
             childAspectRatio: 1.1,
             mainAxisExtent: 150

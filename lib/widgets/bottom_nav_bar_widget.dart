@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../Firebase/firebase_collection.dart';
-import '../book_category/screen/book_category_class_screen.dart';
+import '../book_category/screen/category_screen.dart';
 import '../book_details/screen/book_details_screen.dart';
 import '../book_notification_detail/screen/book_notification_details_screen.dart';
 import '../home/screen/home_screen.dart';
@@ -24,7 +24,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
   List<Widget> buildScreen(){
     return [
       const HomeScreen(),
-      const BookCategoryScreen(),
+      const CategoryScreen(),
       const MyLibraryScreen(),
       const BookNotificationDetailScreen(),
       const ProfileScreen()
@@ -48,7 +48,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
         var notificationData = await FirebaseCollection().addBookCollection.get();
 
         for(var data in notificationData.docChanges){
-          if(data.doc.get('bookName') == message.data.values.last
+          if(data.doc.get('name') == message.data.values.last
               && data.doc.get('currentUser') == message.data.values.first){
             Navigator.push(context, MaterialPageRoute(builder: (context)=>
                 BookDetailScreen(snapshotData: data.doc, bookImages: data.doc.get('bookImages'))));
@@ -103,8 +103,8 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                   icon:  Icon(Icons.home)
               ),
               BottomNavigationBarItem(
-                  label: "Class",
-                  icon: Icon(Icons.class_)
+                  label: "Category",
+                  icon: Icon(Icons.category)
               ),
               BottomNavigationBarItem(
                   label: "Library",

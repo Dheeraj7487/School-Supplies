@@ -1,10 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:school_supplies_hub/add_details/provider/add_book_detail_provider.dart';
+import 'package:school_supplies_hub/book_details/provider/book_details_provider.dart';
+import 'package:school_supplies_hub/home/provider/home_provider.dart';
 import 'package:school_supplies_hub/home/provider/internet_provider.dart';
 import 'package:school_supplies_hub/utils/app_color.dart';
 import 'package:school_supplies_hub/widgets/loading_widget.dart';
@@ -49,13 +52,20 @@ void main() async{
     alert: true, badge: true, sound: true,
   );
 
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.transparent,
+    statusBarColor: AppColor.appColor,
+  ));
+
    runApp(
       MultiProvider(
           providers: [
+            ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+            ChangeNotifierProvider<BookDetailProvider>(create: (_) => BookDetailProvider()),
             ChangeNotifierProvider<LoadingProvider>(create: (_) => LoadingProvider()),
             ChangeNotifierProvider<AddBookDetailProvider>(create: (_) => AddBookDetailProvider()),
             ChangeNotifierProvider<InternetProvider>(create: (_) => InternetProvider()),
-          ], child: const MyApp())
+         ], child: const MyApp())
    );
 }
 
@@ -99,7 +109,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const SplashScreen(),
       builder: (context, child) {
-        return  LoadingWidget(child: child!,);
+        return  LoadingWidget(child: child,);
       },
     );
   }

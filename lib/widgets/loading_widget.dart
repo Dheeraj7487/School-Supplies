@@ -7,7 +7,7 @@ import '../login/provider/loading_provider.dart';
 class LoadingWidget extends StatelessWidget {
   final Widget? child;
 
-  const LoadingWidget({super.key, this.child});
+  const LoadingWidget({this.child});
 
   @override
   Widget build(BuildContext context) {

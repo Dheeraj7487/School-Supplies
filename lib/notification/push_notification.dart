@@ -8,7 +8,7 @@ import 'package:school_supplies_hub/Firebase/firebase_collection.dart';
 import '../../main.dart';
 import '../book_details/screen/book_details_screen.dart';
 
-class PushNotification extends ChangeNotifier{
+class PushNotification {
   late String token;
 
   getToken() async {
@@ -51,11 +51,11 @@ class PushNotification extends ChangeNotifier{
       debugPrint('Notification Data ${message.data.values.last}');
 
       for(var data in notificationData.docChanges){
-        if(data.doc.get('bookName') == message.data.values.last
+        if(data.doc.get('name') == message.data.values.last
             && data.doc.get('currentUser') == message.data.values.first
         ){
-          debugPrint('Book Price ${data.doc.get('bookName')}');
-          debugPrint('Book Description ${data.doc.get('bookDescription')}');
+          debugPrint('Book Price ${data.doc.get('name')}');
+          debugPrint('Book Description ${data.doc.get('description')}');
            Navigator.push(context, MaterialPageRoute(builder: (context)=>
               BookDetailScreen(snapshotData: data.doc, bookImages: data.doc.get('bookImages'),)));
         }

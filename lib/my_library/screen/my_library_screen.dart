@@ -65,10 +65,10 @@ class MyLibraryScreen extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children:  [
-                                          Text(snapshot.data?.docs[index]['bookName'],
+                                          Text(snapshot.data?.docs[index]['name'],
                                               style : const TextStyle(color: AppColor.whiteColor,fontSize: 16),maxLines: 1,overflow: TextOverflow.ellipsis),
                                           const SizedBox(height: 5),
-                                          Text(snapshot.data?.docs[index]['bookDescription'],
+                                          Text(snapshot.data?.docs[index]['description'],
                                             style: const TextStyle(color: AppColor.whiteColor,fontSize: 10),maxLines: 2,overflow: TextOverflow.ellipsis,textAlign: TextAlign.start,),
                                           const SizedBox(height: 5),
                                           RatingBar.builder(

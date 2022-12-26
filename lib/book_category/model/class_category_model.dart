@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-class CategoryListModel{
+class ClassCategoryModel{
   String className,classImage;
   Color gridColor;
 
-  CategoryListModel({
+  ClassCategoryModel({
     required this.gridColor,required this.classImage,required this.className,
   });
 }
